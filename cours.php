@@ -72,7 +72,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     </header>
     <!-- Start: Filter -->
     <div class="filter">
-            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button name="Rechercher">Rechercher</button><br>
+            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button name="Rechercher" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
 
             <div class="form-group" style="color: rgb(102,102,102);">
                 <select multiple id="multipleThemes" style="  color: rgb(102,102,102);" class="text-blue-grey">
