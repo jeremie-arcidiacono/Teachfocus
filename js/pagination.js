@@ -10,8 +10,8 @@ function getElements() {
     pagination = document.querySelector('.pagination');
 }
 
-function generateButtons() {
-    let nbButtons = 6;
+function generateButtons(nbButtons=6) {
+    //let nbButtons = 6;
 
     pagination.innerHTML = `<li class="page-item" onclick="changePage(0)" id="btnPage_previous"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`;
     pagination.innerHTML += `<li class="page-item btnPageSelected" onclick="changePage(1)" id="btnPage_1"><a class="page-link" >1</a></li>`;

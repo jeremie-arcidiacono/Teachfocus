@@ -14,7 +14,7 @@ else if (location.hostname == "teachfocus.ch") {
     URL = "https://teachfocus.ch/api";
 }
 
-function callWS_courses(page) {
+function callWS_courses(page, search=undefined) {
     var path = window.location.pathname;
     var pageName = path.split("/").pop();
 
@@ -30,6 +30,10 @@ function callWS_courses(page) {
         else {
             fullUrl += `&page=1`;
         }
+        
+        if (search != "" && search != undefined && search != null) {
+            fullUrl += `&s=${search}`;
+        }
     }
 
     $.ajax({
@@ -37,12 +41,23 @@ function callWS_courses(page) {
         url: fullUrl,
         success: function (data) {
             if (data["APIcode"] == 0) {
-                if (data["courses"].length < 1) {
-                    changePage(page - 1);
+                coursesInfo = data["info"];
+                if (coursesInfo.NB_ALL_COURSES <= 0) {
+                    document.getElementById("courses").innerHTML = "Aucun cours à afficher";
                 }
-                else {
-                    displayAllCourses(data);
-                }
+                else{
+                    let numberCurrentPage = document.getElementById("paginationButtonsContainers").childElementCount -2; // Nombre de page a afficher actuelle, avant de modifier ce nombre.  -2 car les btn suivant et précédent ne doive pas etre compter
+                    if (numberCurrentPage != coursesInfo.NB_PAGES) {
+                        generateButtons(coursesInfo.NB_PAGES); // Regénere les boutons de selection de page, dans le cas ou les filtres/recherche change
+                    }
+
+                    // if (coursesInfo.NB_PAGES < page) {
+                    //     changePage(page - 1);
+                    // }
+                    // else {
+                        displayAllCourses(data);
+                    // }
+                }   
             }
             else if (data["APIcode"] == 21) {
                 document.getElementById("courses").innerHTML = "Le service est actuellement en maintenance .<br>Merci de reessayer plus tard.";
@@ -62,7 +77,7 @@ function callWS_courses(page) {
 
 // Va chercher des info concernant les cours avec l'API
 // Puis, les stock dans une vriable global pour plus tard
-function callWS_refreshCoursesInfo() {
+/*function callWS_refreshCoursesInfo() {
         var fullUrl = `${URL}/getCoursesStatistics.php`;
         $.ajax({
             type: "GET",
@@ -86,15 +101,15 @@ function callWS_refreshCoursesInfo() {
             }
     });
 
-}
+}*/
 
 // Retourne le nombre de page maximum qu'on peut avoir
-function getPaginationMaxPage() {
+/*function getPaginationMaxPage() {
     if(typeof coursesInfo === "undefined"){
         callWS_refreshCoursesInfo();
     }
     return coursesInfo.NB_PAGES;
-}
+}*/
 
 function displayAllCourses(dataCourses) {
     let courses = document.getElementById("courses");
@@ -131,9 +146,9 @@ function displayAllCourses(dataCourses) {
 
 function changePage(page) {
     const NAME_CLASS_SELECTED = "btnPageSelected";
-    if (page != "" && page != undefined && page != null) {
-        if (page > 6) {
-            r
+    if (page != "" && page != undefined && page != null && page != 0) {
+        if (page > coursesInfo.NB_PAGES) {
+            return false;
         }
         var lastPageButtonSelected = document.getElementsByClassName(NAME_CLASS_SELECTED)[0];
         lastPageButtonSelected.classList.remove(NAME_CLASS_SELECTED);
@@ -143,6 +158,6 @@ function changePage(page) {
         document.getElementById("btnPage_next").setAttribute("onclick", "changePage(" + (page + 1) + ")");
         document.getElementById("btnPage_previous").setAttribute("onclick", "changePage(" + (page - 1) + ")");
 
-        callWS_courses(page);
+        callWS_courses(page, document.getElementById("search").value);
     }
 }

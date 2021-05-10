@@ -30,6 +30,7 @@ if (!checkVarExist($flag)) {
 
 $customLimit = filter_input(INPUT_GET, "limit", FILTER_VALIDATE_INT);
 $page = filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT);
+$searchWord = filter_input(INPUT_GET, "s", FILTER_SANITIZE_STRING);
 
 if (!checkVarExist($page)) {
   $page=0;    // O = no pagination is needed
@@ -59,13 +60,25 @@ if ($page != 0) {
     $limit = ($page-1) * COURSES_PER_PAGE_COURSES . ", " . COURSES_PER_PAGE_COURSES;
 }
 
+if ($searchWord != null && $searchWord != "") {
+    $searchWord = "&& (title LIKE '%$searchWord%' OR lastName LIKE '%$searchWord%' OR firstName LIKE '%$searchWord%')";
+}
+else {
+    $searchWord = "";
+}
 
 
 try {
-    $sql = $conn->prepare("SELECT idCourse, title, price, promoPrice, shortDescription, `description`, codeBanner, themeName, langName, diffName FROM v_coursesub WHERE isActive = 1 $orderBy LIMIT $limit");
+    $sql = $conn->prepare("SELECT idCourse, title, price, promoPrice, shortDescription, `description`, codeBanner, themeName, langName, diffName FROM v_coursesub WHERE isActive = 1 $searchWord $orderBy LIMIT $limit");
     $sql->bindParam(":limitEnd", $limit);
     $sql->execute();
     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+    $sql = $conn->prepare("SELECT COUNT(idCourse) AS NBCOUR FROM v_coursesub WHERE isActive = 1 $searchWord");
+    $sql->execute();
+    $resultTemp = $sql->fetch();
+    $resultStatistics["NB_ALL_COURSES"] = $resultTemp["NBCOUR"];
+    $resultStatistics["NB_PAGES"] = ceil($resultTemp["NBCOUR"] / COURSES_PER_PAGE_COURSES);
 } catch (PDOEXCEPTION $e) {
 	// var_dump($sql);
 	// echo "<br>";
@@ -75,7 +88,12 @@ try {
 }
 
 
+$response = array('info' => array());
 $response = array('courses' => array());
+
+foreach ($resultStatistics as $key => $stat) {
+    $response['info'][$key] = $stat;
+}
 foreach ($result as $key => $course) {
     $response['courses'][] = $course;
 }

@@ -72,26 +72,27 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     </header>
     <!-- Start: Filter -->
     <div class="filter">
-        <form>
-            <input placeholder="Rechercher un cours" id="search" onkeyup="searchCourse()"></input><br>
+            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button name="Rechercher">Rechercher</button><br>
 
-            <select>
-                <option value="" hidden>Thèmes</option>
-            <?php
-                foreach ($lstThemes as $test) {
-                    echo "<option value=\"\"> $test[name]</option>";
-                }
-            ?>
-            </select>
+            <div class="form-group" style="color: rgb(102,102,102);">
+                <select multiple id="multipleThemes" style="  color: rgb(102,102,102);" class="text-blue-grey">
+                    <option value="" hidden>Thèmes</option>
+                    <?php
+                    foreach ($lstThemes as $test) {
+                        echo "<option value=\"\"> $test[name]</option>";
+                    }
+                    ?>
+                </select>
+            </div>
             <select>
                 <option value="" hidden>Difficultés</option>
-            <?php
-            foreach ($lstDifficulties as $test) {
+                <?php
+                foreach ($lstDifficulties as $test) {
                     echo "<option value=\"\"> $test[name]</option>";
                 }
                 ?>
-               
-                </select>
+
+            </select>
             <select>
                 <option value="" hidden>Prix</option>
                 <option value="">Gratuit</option>
@@ -99,7 +100,6 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
             </select>
 
 
-        </form>
     </div><!-- End: Filter -->
     <!-- Start: Article List -->
     <section class="article-list">
@@ -114,20 +114,37 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         </div>
         </div>
     </section><!-- End: Article List -->
-        <div class="thread-list-head">
-            <nav class="thread-pages">
-                <ul class="pagination"></ul>
-            </nav>
-        </div>
+    <div class="thread-list-head">
+        <nav class="thread-pages">
+            <ul class="pagination" id="paginationButtonsContainers"></ul>
+        </nav>
+    </div>
+
+    <!-- Start: Multiple Select MaterializeCSS -->
+    <div class="form-group" style="width: 350px;min-width: 350px;min-height: 50px;margin-top: 15px;padding-top: 41px;padding-bottom: 24px;color: rgb(102,102,102);">
+        <select multiple id="multiple_user" style="  color: rgb(102,102,102);" class="text-blue-grey">
+            <option value="1" style="  color: rgb(102,102,102);">Option 1</option>
+            <option value="2" style="  color: rgb(102,102,102);">Option 2</option>
+            <option value="3" style="  color: rgb(102,102,102);">Option 3</option>
+        </select>
+    </div><!-- End: Multiple Select MaterializeCSS -->
 
 
-  
-
-        <?php include 'php/environement/footer.php'; ?>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-        <script src="js/searchCourse.js"></script>
-        <script src="js/callWS.js" onload="callWS_courses()"></script>
+    <?php include 'php/environement/footer.php'; ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="assets/js/Multi-Select-Dropdown-by-Jigar-Mistry.js"></script>
+    <script src="assets/js/Multi-Select-MaterializeCSS.js"></script>
+    <script src="js/searchCourse.js"></script>
+    <script src="js/callWS.js" onload="callWS_courses()"></script>
+    <script>
+        function enterKeyPressed(event) {
+            if (event.keyCode == 13) {
+                callWS_courses(1, document.getElementById("search").value);
+            }
+        }
+    </script>
 </body>
 
 </html>
