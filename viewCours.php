@@ -187,7 +187,7 @@ $query->execute();
         </div>
     </aside>
     <video width="50%" height="auto" controls style="margin-top: 5%; margin-bottom: 10%; margin-left:3%; ">
-        <source src="assets/userMedia/vidCourseMain/Season 9 trailer & NEW content coming to Apex Legends soon!.mp4" type="video/mp4">
+        <source src="assets/userMedia/vidCourseMain/vid01.mp4" type="video/mp4">
     </video>
 
 
