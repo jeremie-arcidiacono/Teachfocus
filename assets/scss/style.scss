@@ -1,0 +1,19 @@
+/**
+ * Projet : TeachFocus - SCSS
+ * @author : Alexandre PINTRAND
+ * @version : 1.0, 23/04/2021, Initial revision
+**/
+
+#consent-popup {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem 8rem;
+    background: linear-gradient(135deg, #172a74, #21a9af);
+    color: white;
+}
+
+.hidden {
+    display: none;
+}

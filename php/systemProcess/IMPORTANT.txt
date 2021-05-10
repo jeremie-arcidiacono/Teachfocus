@@ -1,0 +1,2 @@
+Ce dossier ("systemProcess") ne doit absolument pas être chez infomaniak (sur le site teachfocus.ch) lors de la mise en ligne oficiel du site. 
+Le dossier est ici que pour la phase de développement.

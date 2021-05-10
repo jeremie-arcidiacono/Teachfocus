@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Inscription</title>
+        <meta charset="utf-8" />
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>		
+        <h1>Inscription</h1>
+        <fieldset>
+            <legend>Formulaire d'inscription</legend>
+        <div id="formulaire">
+				<form action="#" method="POST">
+                    <label>Pseudo :</label>
+                    <input type="text" name="pseduo" id="pseudo"size="30"><br>
+                    <br>
+                    <label>Nom :</label>
+                    <input type="text" name="nom" id="nom"size="30"><br>
+                    <br>
+                    <label>Prenom :</label>
+                    <input type="text" name="prenom" id="prenom"size="30"><br>
+                    <br>
+                    <label>E-mail :</label>
+                    <input type="email" name="email" id="email" size="30"><br>
+                    <br>
+                    <label>Mot de passe :</label>
+                    <input type="password" name="mdp" id="mdp" size="25" placeholder="8 caractères minimum" minlength="8"><br>
+                    <br>         
+                    <div class="radio">
+                        <input type="radio" name="choix" value="Professeur">
+                        <label>Professeur</label>
+                        <input type="radio" name="choix" value="Eleve">
+                        <label>Elève</label>
+                    </div>
+                    <br>
+                    <input type="submit" name="envoyer" id="envoyer" value="Envoyer">
+                    <input type="reset" name="effacer" id="effacer" value="Effacer">
+                </form>
+            </fieldset>
+	    </div>
+    </body>
+</html>
