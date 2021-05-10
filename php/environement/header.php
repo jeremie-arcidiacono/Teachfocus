@@ -12,6 +12,11 @@
                         if ($_SESSION["User"]->userType == "enseignant") { ?>
                         <li class="nav-item"><a class="nav-link" href="espaceEnseignant.php">Espace enseignant</a></li>
                     <?php }} ?>
+                    <?php
+                    if (isUserLogged()) {
+                        if ($_SESSION["User"]->userType == "élève") { ?>
+                        <li class="nav-item"><a class="nav-link" href="mesCours.php">Mes cours</a></li>
+                    <?php }} ?>
                 </ul>
                 <form class="form-inline mr-auto" target="_self">
                     <div class="form-group mb-0"><label for="search-field"></label></div>
