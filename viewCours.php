@@ -33,12 +33,12 @@ if (isset($_GET["disconnect"]) && !empty($_GET["disconnect"])) {
     logOutUser();
 }
 
-$sql = $conn->prepare(
-    "SELECT * 
-    FROM course"
-);
-$sql->execute();
-$record = $sql->fetchAll(PDO::FETCH_ASSOC);
+// $sql = $conn->prepare(
+//     "SELECT * 
+//     FROM course"
+// );
+// $sql->execute();
+// $record = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 
 $idCourse = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
@@ -54,6 +54,14 @@ $sql = $conn->prepare("SELECT * FROM v_coursesub WHERE idCourse = :idCours");
 $sql->bindParam(":idCours", $idCourse);
 $sql->execute();
 $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+if ($result["isActive"] != 1) {
+    header("HTTP/1.0 410 Gone");
+    echo "<h1>410 - Gone</h1>";
+    echo "<p>Ce cours n'est plus disponible ou bloqué par des administrateurs</p>";
+    echo "<a href=\"cours.php\"><button>Retour</button></a>";
+    die();
+}
 
 $query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
 $query->bindParam(":idCours", $idCourse);
