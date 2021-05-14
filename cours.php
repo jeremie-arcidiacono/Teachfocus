@@ -136,6 +136,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="assets/js/Multi-Select-Dropdown-by-Jigar-Mistry.js"></script>
     <script src="assets/js/Multi-Select-MaterializeCSS.js"></script>
+    <script src="js/func.js"></script>
     <script src="js/searchCourse.js"></script>
     <script src="js/callWS.js" onload="callWS_courses()"></script>
     <script>

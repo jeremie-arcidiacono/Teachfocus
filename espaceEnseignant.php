@@ -101,10 +101,11 @@ $coursUser = $query->fetchAll(PDO ::FETCH_ASSOC);
             echo "$cours[title]";
             echo "<h3 class=\"name\">$cours[title]</h3>";
             echo "<p class=\"description\">$cours[shortDescription]</p>";
-            echo "<a href=\"viewCours.php?id=$cours[description]\"><p class=\"price\">";
+            echo "<a href=\"viewCours.php?id=$cours[idCourse]\"><p class=\"price\">";
             echo "<span class=\"noPromoPrice\">$cours[title]</span>";
             echo "<span class=\"currentPrice\">$cours[title]</span></p><br>";
-            echo "<button class=\"btn btn-outline-primary\" value=\"VoirCours\">Voir cours</button></a></div>";
+            echo "<button class=\"btn btn-outline-primary\" value=\"VoirCours\">Voir cours</button>";
+            echo "<button class=\"btn btn-outline-primary\" value=\"EditCourse\">Modifier Cours</button></a></div>";
         }
 
 

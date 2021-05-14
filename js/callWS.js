@@ -14,24 +14,27 @@ else if (location.hostname == "teachfocus.ch") {
     URL = "https://teachfocus.ch/api";
 }
 
+var lstPageWithPagination = ["cours.php"]; // array de toutes les page néccéssitant un système de pagination
+
 function callWS_courses(page, search=undefined) {
     var path = window.location.pathname;
     var pageName = path.split("/").pop();
 
     var fullUrl = `${URL}/getCourses.php`;
-    if (pageName == "index.php") {
+    if (lstPageWithPagination.indexOf(pageName) == -1) {
+        // La page n'a pas besoin de pagination
         fullUrl = `${URL}/getCourses.php?limit=9&flag=bestClick`;
     }
-    if (pageName == "cours.php") {
+    else{
         fullUrl = `${URL}/getCourses.php?flag=all`;
-        if (page != "" && page != undefined && page != null) {
+        if (!isNullOrEmpty(page)) {
             fullUrl += `&page=${page}`;
         }
         else {
             fullUrl += `&page=1`;
         }
         
-        if (search != "" && search != undefined && search != null) {
+        if (!isNullOrEmpty(search)) {
             fullUrl += `&s=${search}`;
         }
     }
@@ -46,13 +49,16 @@ function callWS_courses(page, search=undefined) {
                     document.getElementById("courses").innerHTML = "Aucun cours à afficher";
                 }
                 else{
-                    if (condition) {
-                        
+                    var path = window.location.pathname;
+                    var pageName = path.split("/").pop();
+
+                    if (lstPageWithPagination.indexOf(pageName) != -1) {
+                        let numberCurrentPage = document.getElementById("paginationButtonsContainers").childElementCount -2; // Nombre de page a afficher actuelle, avant de modifier ce nombre.  -2 car les btn suivant et précédent ne doive pas etre compter
+                        if (numberCurrentPage != coursesInfo.NB_PAGES) {
+                            generateButtons(coursesInfo.NB_PAGES); // Regénere les boutons de selection de page, dans le cas ou les filtres/recherche change
+                        }
                     }
-                    let numberCurrentPage = document.getElementById("paginationButtonsContainers").childElementCount -2; // Nombre de page a afficher actuelle, avant de modifier ce nombre.  -2 car les btn suivant et précédent ne doive pas etre compter
-                    if (numberCurrentPage != coursesInfo.NB_PAGES) {
-                        generateButtons(coursesInfo.NB_PAGES); // Regénere les boutons de selection de page, dans le cas ou les filtres/recherche change
-                    }
+                    
 
                     // if (coursesInfo.NB_PAGES < page) {
                     //     changePage(page - 1);

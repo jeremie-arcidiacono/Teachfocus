@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @project : TeachFocus
- * @author : Alexandre PINTRAND / Grégoire PEAN / Jérémie ARCHIDIACONO
- * @version : 1.0, 30/04/2021, Initial revision
- **/
+ * @project : TeachFocus - Edit Course
+ * @author : Alexandre PINTRAND
+ * @version : 11.0, 14/05/2021, Initial revision
+**/
 
 require_once("php/protectedInfo/infoDB.php");
 require_once("php/environement/env_cookies.php");
@@ -13,18 +13,9 @@ session_start();
 //require_once("php/connection.php");
 require_once("php/globalFunc01.php");
 require_once("php/security.php");
+require_once("php/functions.php");
 
-$errorMsg = array();
-
-if (!isUserLogged()) {
-    header('Location: index.php', true, 301);
-    exit();
-}
-if ($_SESSION["User"]->userType != "enseignant") {
-    //header("HTTP/1.1 401 Unauthorized");
-    header('Location: index.php', true, 301);
-    exit();
-}
+$id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 
 if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "dev.teachfocus.ch") {
     try {
@@ -53,18 +44,30 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         $lstIdDifficulties[] = $difficultie["idDifficulty"];
     }
 
-    // $idRole = filter_input(INPUT_POST, "difficulty", FILTER_VALIDATE_INT);
-
-    // if (is_nan($idRole)) {
-    //     $errorMsg[] = "Erreur : Le role n'est pas valide (vide ou pas numerique) (C:1)";
-    // } else {
-    //     if ($idRole == "0") {
-    //         $idRole = NULL;
-    //     } elseif (!in_array($idRole, $lstIdDifficulties)) {
-    //         $errorMsg[] = "Erreur : Le role n'existe pas (C:1)";
-    //     }
-    // }
 }
+
+if ($id) {
+    $idUser = getUserIdFromCourseById($id);
+
+    if ($_SESSION["User"]->userId != $idUser["idUser"]) {
+        header('Location: index.php', true, 301);
+        exit();
+    }
+}
+
+$errorMsg = array();
+
+if (!isUserLogged()) {
+    header('Location: index.php', true, 301);
+    exit();
+}
+if ($_SESSION["User"]->userType != "enseignant") {
+    //header("HTTP/1.1 401 Unauthorized");
+    header('Location: index.php', true, 301);
+    exit();
+}
+
+
 
 $inputSubmit = filter_input(INPUT_POST, "submit", FILTER_SANITIZE_STRING);
 $inputCourseName = filter_input(INPUT_POST, "courseName", FILTER_SANITIZE_STRING);

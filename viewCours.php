@@ -51,7 +51,7 @@ $idCourse = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
 
 
 $sql = $conn->prepare("SELECT * FROM v_coursesub WHERE idCourse = :idCours");
-$sql->bindParam(":idCours", $idCourse);
+$sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
 $sql->execute();
 $result = $sql->fetch(PDO::FETCH_ASSOC);
 

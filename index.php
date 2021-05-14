@@ -101,6 +101,7 @@ $record = $sql->fetchAll(PDO ::FETCH_ASSOC);
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js"></script>
+    <script src="js/func.js"></script>
     <script src="js/cookiesConsent.js"></script>
     <script src="js/callWS.js" onload="callWS_courses()"></script>
     <script>

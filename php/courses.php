@@ -40,7 +40,6 @@ function displayCoursesList($courseList)
                 <br>
                 
                 <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button>
-
             </a>
         </div>
 <?php }
