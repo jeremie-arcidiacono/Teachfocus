@@ -82,7 +82,7 @@ $currentDate = date('Y-m-d', (time()));
 // Upload image part made by Alexandre PINTRAND
 
 if ($inputSubmit == "Créer un cours") {
-    if ($_FILES["img"]["name"] != "" && $inputShortDescription && $inputCourseName != "" && $inputIdLangue !== null && $inputIdTheme != null && $inputDescription != "" && $inputIdDifficulties != null) {
+    if ($_FILES["img"]["name"] != "" && $inputShortDescription && $inputCourseName != "" && $inputIdLangue !== null && $inputIdTheme != null && $inputDescription != "" && $inputPrerequis != "" && $inputIdDifficulties != null) {
 
         $uniqId = uniqid('', true);
         $target_dir = "assets/userMedia/imgCourseBanner/";

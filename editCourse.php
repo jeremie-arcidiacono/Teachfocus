@@ -15,6 +15,8 @@ require_once("php/globalFunc01.php");
 require_once("php/security.php");
 require_once("php/globalFunc02.php");
 
+$errorMsg = array(); // A chaque erreur le tableau se rempli, il serra afficher ensuite
+
 $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 
 if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "dev.teachfocus.ch") {
@@ -47,6 +49,16 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
 }
 
+if (!isUserLogged()) {
+    header('Location: index.php', true, 301);
+    exit();
+}
+if ($_SESSION["User"]->userType != "enseignant") {
+    //header("HTTP/1.1 401 Unauthorized");
+    header('Location: index.php', true, 301);
+    exit();
+}
+
 if ($id) {
     $idUser = getUserIdFromCourseById($id);
 
@@ -70,7 +82,7 @@ if ($id) {
         $inputIdDifficulties = filter_input(INPUT_POST, "difficulties", FILTER_VALIDATE_INT);
         $currentDate = date('Y-m-d', (time()));
 
-        if ($inputShortDescription && $inputCourseName != "" && $inputIdLangue !== null && $inputIdTheme != null && $inputDescription != "" && $inputIdDifficulties != null) {
+        if ($inputPrerequis && $inputShortDescription && $inputCourseName && $inputIdLangue && $inputIdTheme && $inputDescription && $inputIdDifficulties && isset($lstLanguages[$inputIdLangue]) && isset($lstDifficulties[$inputIdDifficulties]) && isset($lstThemes[$inputIdTheme])) {
             if ($_FILES["img"]["name"] != "") {
                 $uniqId = uniqid('', true);
                 $target_dir = "assets/userMedia/imgCourseBanner/";
@@ -79,65 +91,65 @@ if ($id) {
                 $target_file = $target_dir . $uniqId . "." . $imageFileType;
         
                 $check = getimagesize($_FILES["img"]["tmp_name"]);
+
+                if ($check !== false) {
+                    // "Le fichier est une image - " . $check["mime"] . ".";
+                    $uploadValid = 1;
+                } else {
+                    $errorMsg[] = "Le fichier n'est pas une image.";
+                    $uploadValid = 0;
+                }
+        
+                if (file_exists($target_file)) {
+                    $errorMsg[] = "Désolé, le fichier existe déjà.";
+                    $uploadValid = 0;
+                }
+        
+                if ($_FILES["img"]["size"] > 2000000) {
+                    $errorMsg[] = "Désolé, votre fichier est trop volumineux.";
+                    $uploadValid = 0;
+                }
+        
+                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                    $errorMsg[] = "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
+                    $uploadOk = 0;
+                }
+        
+                if ($uploadValid == 0) {
+                    $errorMsg[] = "Désolé, votre fichier n'a pas été importer.";
+                } else {
+                    if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+                        $imageName = $uniqId . "." . $imageFileType;
+                        // echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
+                    } else {
+                        $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
+                    }
+                }
+            }
+            else {
+                $imageName = $course["codeBanner"];
             }
     
             if ($inputPrice === false || $inputPrice == 0.00) {
                 $inputPrice = null;
-             }
-    
-            if ($check !== false) {
-                // "Le fichier est une image - " . $check["mime"] . ".";
-                $uploadValid = 1;
-            } else {
-                $errorMsg[] = "Le fichier n'est pas une image.";
-                $uploadValid = 0;
             }
-    
-            if (file_exists($target_file)) {
-                $errorMsg[] = "Désolé, le fichier existe déjà.";
-                $uploadValid = 0;
-            }
-    
-            if ($_FILES["img"]["size"] > 2000000) {
-                $errorMsg[] = "Désolé, votre fichier est trop volumineux.";
-                $uploadValid = 0;
-            }
-    
-            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                $errorMsg[] = "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
-                $uploadOk = 0;
-            }
-    
-            if ($uploadValid == 0) {
-                $errorMsg[] = "Désolé, votre fichier n'a pas été importer.";
-            } else {
-                if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-                    // echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
-                } else {
-                    $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
-                }
-            }
-    
+
             if (count($errorMsg) <= 0) {
                 $isActive = 1;
-                $imageName = $uniqId . "." . $imageFileType;
-    
-                $sql = $conn->prepare("INSERT INTO `course`
-                (`title`,
-                `price`,
-                `shortDescription`, 
-                `description`, 
-                `dateCreated`,
-                `dateUpdated`,
-                `prerequisite`,
-                `codeBanner`,
-                `isActive`,
-                `idUser`,
-                `idDifficulty`,
-                `idTheme`,
-                `idLanguage`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $sql->execute([$inputCourseName, $inputPrice, $inputShortDescription, $inputDescription, $currentDate, $currentDate, $inputPrerequis, $imageName, $isActive, $_SESSION["User"]->idUser, $inputIdDifficulties, $inputIdTheme, $inputIdLangue]);
+
+                $course["title"] = $inputCourseName;
+                $course["price"] = $inputPrice;
+                $course["shortDescription"] = $inputShortDescription;
+                $course["description"] = $inputDescription;
+                $course["dateUpdated"] = $currentDate;
+                $course["prequisite"] = $inputPrerequis;
+                $course["codeBanner"] = $imageName;
+                $course["isActive"] = $isActive;
+                $course["idDifficulty"] = $inputIdDifficulties;
+                $course["idTheme"] = $inputIdTheme;
+                $course["idLanguage"] = $inputIdLangue;
+
+                updateCourseById($id, $course["title"], $course["price"], $course["shortDescription"], $course["description"], $course["dateUpdated"], $course["prequisite"], $course["codeBanner"], $course["isActive"], $course["idDifficulty"], $course["idTheme"], $course["idLanguage"]);
                 unset($isActive);
                 header('Location: espaceEnseignant.php', true, 301); // TEMPORAIRE
             }
@@ -147,17 +159,7 @@ if ($id) {
     }
 }
 
-$errorMsg = array();
 
-if (!isUserLogged()) {
-    header('Location: index.php', true, 301);
-    exit();
-}
-if ($_SESSION["User"]->userType != "enseignant") {
-    //header("HTTP/1.1 401 Unauthorized");
-    header('Location: index.php', true, 301);
-    exit();
-}
 
 // Upload image part made by Alexandre PINTRAND
 
@@ -187,17 +189,17 @@ if ($_SESSION["User"]->userType != "enseignant") {
             <form method="post" name="create_cours_form" onsubmit="ValidateCreateCoursForm()" enctype="multipart/form-data">
                 <h2 class="sr-only">Créer un cours</h2>
                 <div class="form-group">
-                    <input value="<?= $inputCourseName ?>" class="form-control" type="text" name="courseName" id="courseName" size="80" placeholder="Nom du cours">
+                    <input value="<?= $course["title"] ?>" class="form-control" type="text" name="courseName" id="courseName" size="80" placeholder="Nom du cours">
                 </div>
                 <div class="form-group">
-                    <input value="<?= $inputPrice ?>" class="form-control" type="text" name="price" id="price" size="3" placeholder="Prix" onkeypress="return onlyAcceptDecimalNumbers(this, event)">
+                    <input value="<?= $course["price"] ?>" class="form-control" type="text" name="price" id="price" size="3" placeholder="Prix" onkeypress="return onlyAcceptDecimalNumbers(this, event)">
                 </div>
                 <div class="form-group">
                     <select class="form-control" name="langue" id="langue">
                         <?php 
 
                         foreach ($lstLanguages as $language) {
-                            if ($inputIdLangue == $language["idLanguage"]) { ?>
+                            if ($course["idLanguage"] == $language["idLanguage"]) { ?>
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>" selected><?= $language["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>"><?= $language["name"] ?></option>
@@ -213,7 +215,7 @@ if ($_SESSION["User"]->userType != "enseignant") {
                         <?php 
                         
                         foreach ($lstThemes as $theme) {
-                            if ($inputIdTheme == $theme["idTheme"]) { ?>
+                            if ($course["idTheme"] == $theme["idTheme"]) { ?>
                                 <option style="color: black;" value="<?= $theme["idTheme"] ?>" selected><?= $theme["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $theme["idTheme"] ?>"><?= $theme["name"] ?></option>
@@ -225,13 +227,13 @@ if ($_SESSION["User"]->userType != "enseignant") {
                     </select>
                 </div>
                 <div class="form-group">
-                    <input value="<?= $inputPrerequis ?>" class="form-control" type="text" name="prerequis" id="prerequis" size="80" placeholder="Prérequis">
+                    <input value="<?= $course["prerequisite"] ?>" class="form-control" type="text" name="prerequis" id="prerequis" size="80" placeholder="Prérequis">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" value="<?= $inputShortDescription ?>" name="shortDescription" placeholder="Short Description" id="shortDescription" maxlength="100">
+                    <input type="text" class="form-control" value="<?= $course["shortDescription"] ?>" name="shortDescription" placeholder="Short Description" id="shortDescription" maxlength="100">
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" name="description" placeholder="Description" id="description" rows="5"><?= $inputDescription ?></textarea>
+                    <textarea class="form-control" name="description" placeholder="Description" id="description" rows="5"><?= $course["description"] ?></textarea>
                 </div>
 
                 <div class="form-group">
@@ -239,7 +241,7 @@ if ($_SESSION["User"]->userType != "enseignant") {
                         <?php 
 
                         foreach ($lstDifficulties as $difficulty) {
-                            if ($inputIdDifficulties == $difficulty["idDifficulty"]) { ?>
+                            if ($course["idDifficulty"] == $difficulty["idDifficulty"]) { ?>
                                 <option style="color: black;" value="<?=$difficulty["idDifficulty"] ?>" selected><?= $difficulty["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>"><?= $difficulty["name"] ?></option>
