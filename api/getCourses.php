@@ -70,7 +70,7 @@ else {
 
 try {
     $sql = $conn->prepare("SELECT idCourse, title, price, promoPrice, shortDescription, `description`, codeBanner, themeName, langName, diffName FROM v_coursesub WHERE isActive = 1 $searchWord $orderBy LIMIT $limit");
-    $sql->bindParam(":limitEnd", $limit);
+    $sql->bindParam(":limitEnd", $limit, PDO::PARAM_INT);
     $sql->execute();
     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 

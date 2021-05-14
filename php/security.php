@@ -34,14 +34,14 @@ function isUserStillLogged()
         try {
 
             $sql = $conn->prepare("SELECT COUNT(idSession) AS nb FROM connection_active WHERE idSession = :cookieId");
-            $sql->bindParam(":cookieId", $cookieId);
+            $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
             $sql->execute();
             $nbResult = $sql->fetch();
 
             if ($nbResult["nb"] == "1") {
                 // Une correspondance a été trouver
                 $sql = $conn->prepare("SELECT idSession AS REQ_SESSID, cookieCode AS REQ_SESSCODE, idUser FROM connection_active WHERE idSession = :cookieId");
-                $sql->bindParam(":cookieId", $cookieId);
+                $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
                 $sql->execute();
                 $result = $sql->fetch();
 
@@ -57,13 +57,13 @@ function isUserStillLogged()
                     // Met a jour la db
                     $sql = $conn->prepare("UPDATE `connection_active` SET `dateEnd` = :timeFinish WHERE `idSession` = :cookieId");
                     $timeFinish = date('Y-m-d H:i:s', (time() + 60 * 60 * 24 * 7));  // + 60*60 : On ajoute 1 heure car bug dans le sql 
-                    $sql->bindParam(":timeFinish", $timeFinish);
-                    $sql->bindParam(":cookieId", $cookieId);
+                    $sql->bindParam(":timeFinish", $timeFinish, PDO::PARAM_STR);
+                    $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
                     $sql->execute();
 
 
                     $sql = $conn->prepare("SELECT mail, `password`, lastName, firstName, nickname, ut.name AS 'userType' FROM `user` JOIN user_type AS ut USING(idUserType) WHERE idUser = :idUser");
-                    $sql->bindParam(":idUser", $idUser);
+                    $sql->bindParam(":idUser", $idUser, PDO::PARAM_INT);
                     $sql->execute();
                     $result = $sql->fetch();
 
@@ -107,8 +107,8 @@ function logInUser($userMail)
     $cookieIdName = ENV_COOKIE_ID;
         // Création de cookie (quand il n'existe pas déja)
         $sql = $conn->prepare("SELECT idSession AS :cookieIdName, cookieCode AS :cookieCodeName FROM connection_active"); // Verif if the future id and code will be unique
-        $sql->bindParam(":cookieIdName", $cookieIdName);
-        $sql->bindParam(":cookieCodeName", $cookieCodeName);
+        $sql->bindParam(":cookieIdName", $cookieIdName, PDO::PARAM_INT);
+        $sql->bindParam(":cookieCodeName", $cookieCodeName, PDO::PARAM_STR);
         $sql->execute();
         $resultCookie = $sql->setFetchMode(PDO::FETCH_ASSOC);
         $resultCookie = $sql->fetchAll();
@@ -139,17 +139,17 @@ function logInUser($userMail)
 
     $sql = $conn->prepare("INSERT INTO `connection_active`(`idSession`, `cookieCode`, `clientIpv4`, `dateEnd`, `idUser`) VALUES(:idSession, :cookieCode, :clientIp, :dateEnd, 
     (SELECT idUser FROM user WHERE mail = :inputMail))");
-    $sql->bindParam(":idSession", $cookieId);
-    $sql->bindParam(":cookieCode", $cookieCode);
-    $sql->bindParam(":clientIp", $clientIpLong);
-    $sql->bindParam(":dateEnd", $dateEnd);
-    $sql->bindParam(":inputMail", $userMail);
+    $sql->bindParam(":idSession", $cookieId, PDO::PARAM_INT);
+    $sql->bindParam(":cookieCode", $cookieCode, PDO::PARAM_STR);
+    $sql->bindParam(":clientIp", $clientIpLong, PDO::PARAM_INT);
+    $sql->bindParam(":dateEnd", $dateEnd, PDO::PARAM_STR);
+    $sql->bindParam(":inputMail", $userMail, PDO::PARAM_STR);
     $sql->execute();
 
 
     // Obtention des infos de l'utilisateur pour pouvoir tout mettre en session
     $sql = $conn->prepare("SELECT idUser, mail, `password`, lastName, firstName, nickname, ut.name AS 'userType' FROM `user` JOIN user_type AS ut USING(idUserType) WHERE mail = :userMail");
-    $sql->bindParam(":userMail", $userMail);
+    $sql->bindParam(":userMail", $userMail, PDO::PARAM_STR);
     $sql->execute();
     $result = $sql->fetch();
 
@@ -171,8 +171,8 @@ function logOutUser()
     // Suppression enregistrement DB
     try {
         $sql = $conn->prepare("DELETE FROM `connection_active` WHERE `idSession` = :cookieId AND `cookieCode` = :cookieCode");
-        $sql->bindParam(":cookieId", $cookieId);
-        $sql->bindParam(":cookieCode", $cookieCode);
+        $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
+        $sql->bindParam(":cookieCode", $cookieCode, PDO::PARAM_STR);
         $sql->execute();
     } catch (PDOException $e) {
         //$USER_CONNECTED = false;

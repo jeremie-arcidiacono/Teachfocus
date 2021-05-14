@@ -10,7 +10,7 @@ function getBestCourses()
     global $conn;
 
     $sql = $conn->prepare("SELECT idCourse, title, price, promoPrice, `description` FROM v_coursesub ORDER BY nbClick DESC LIMIT 30");
-    $sql->bindParam(":limitEnd", $limitEnd);
+    $sql->bindParam(":limitEnd", $limitEnd, PDO::PARAM_INT);
     $sql->execute();
     return $sql->fetchAll(PDO::FETCH_ASSOC);
 }

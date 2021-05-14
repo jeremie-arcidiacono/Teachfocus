@@ -65,7 +65,7 @@ if ($result["isActive"] != 1) {
 }
 
 $query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
-$query->bindParam(":idCours", $idCourse);
+$query->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
 $query->execute();
 
 ?>

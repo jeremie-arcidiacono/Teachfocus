@@ -76,7 +76,7 @@ if (isset($_POST["email"]) && isset($_POST["mdp"])) {
             if ($nbResult["nb"] >= "1") {
                 // Un ou plusieurs nom d'utilisateur correspond
                 $sql = $conn->prepare("SELECT mail, `password`, lastName, firstName, nickname, ut.name AS 'userType' FROM `user` JOIN user_type AS ut USING(idUserType) WHERE mail = :inputMail"); // Verif if user exist and correct password. And get info about user, it will be stored in _SESSION for later
-                $sql->bindParam(":inputMail", $inputMail);
+                $sql->bindParam(":inputMail", $inputMail, PDO::PARAM_STR);
                 $sql->execute();
                 $result = $sql->fetch(PDO::FETCH_ASSOC);
 

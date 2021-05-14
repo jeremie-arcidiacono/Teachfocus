@@ -16,7 +16,7 @@ function isUserLogged(){
         try {
             
             $sql = $conn->prepare("SELECT COUNT(idSession) AS nb FROM connection_active WHERE idSession = :cookieId");
-            $sql->bindParam(":cookieId", $cookieId);
+            $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
             $sql->execute();
             $nbResult = $sql->fetch();
             
@@ -24,7 +24,7 @@ function isUserLogged(){
             {   
                 // Une correspondance a été trouver
                 $sql = $conn->prepare("SELECT idSession AS REQ_SESSID, cookieCode AS REQ_SESSCODE FROM connection_active WHERE idSession = :cookieId");
-                $sql->bindParam(":cookieId", $cookieId);
+                $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
                 $sql->execute();
                 $result = $sql->fetch();
 
@@ -37,8 +37,8 @@ function isUserLogged(){
                     // Met a jour la db
                     $sql = $conn->prepare("UPDATE `connection_active` SET `dateEnd` = :timeFinish WHERE `idSession` = :cookieId");
                     $timeFinish = date('Y-m-d H:i:s', (time()+60*60*24*7));  // + 60*60 : On ajoute 1 heure car bug dans le sql 
-                    $sql->bindParam(":timeFinish", $timeFinish);
-                    $sql->bindParam(":cookieId", $cookieId);
+                    $sql->bindParam(":timeFinish", $timeFinish, PDO::PARAM_STR);
+                    $sql->bindParam(":cookieId", $cookieId, PDO::PARAM_INT);
                     $sql->execute();
 
                     $USER_CONNECTED = true;

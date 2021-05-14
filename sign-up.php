@@ -97,7 +97,7 @@ if (
         try {
 
             $sql = $conn->prepare("SELECT COUNT(mail) AS nbMail FROM user WHERE mail = :inputMail");
-            $sql->bindParam(":inputMail", $inputMail);
+            $sql->bindParam(":inputMail", $inputMail, PDO::PARAM_STR);
             $sql->execute();
             $nbResult = $sql->fetch();
 
@@ -121,13 +121,13 @@ if (
                    :mdp,
                    :inscriptionDate,
                    :choix)");
-                $sql->bindParam(":prenom", $inputPrenom);
-                $sql->bindParam(":nom", $inputNom);
-                $sql->bindParam(":pseudo", $inputPseudo);
-                $sql->bindParam(":mail", $inputMail);
-                $sql->bindParam(":mdp", $passwordHash);
-                $sql->bindParam(":inscriptionDate", $currentDate);
-                $sql->bindParam(":choix", $inputChoix);
+                $sql->bindParam(":prenom", $inputPrenom, PDO::PARAM_STR);
+                $sql->bindParam(":nom", $inputNom, PDO::PARAM_STR);
+                $sql->bindParam(":pseudo", $inputPseudo, PDO::PARAM_STR);
+                $sql->bindParam(":mail", $inputMail, PDO::PARAM_STR);
+                $sql->bindParam(":mdp", $passwordHash, PDO::PARAM_STR);
+                $sql->bindParam(":inscriptionDate", $currentDate, PDO::PARAM_STR);
+                $sql->bindParam(":choix", $inputChoix, PDO::PARAM_INT);
                 $sql->execute();
 
                 logInUser($inputMail);
