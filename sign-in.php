@@ -68,7 +68,7 @@ if (isset($_POST["email"]) && isset($_POST["mdp"])) {
     if (!$error) {
         try {
             $sql = $conn->prepare("SELECT COUNT(idUser) AS nb FROM user WHERE mail = :inputMail"); // Verif if user exist
-            $sql->bindParam(":inputMail", $inputMail);
+            $sql->bindParam(":inputMail", $inputMail, PDO::PARAM_STR);
             $sql->execute();
             $nbResult = $sql->fetch();
 

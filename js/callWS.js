@@ -46,6 +46,9 @@ function callWS_courses(page, search=undefined) {
                     document.getElementById("courses").innerHTML = "Aucun cours à afficher";
                 }
                 else{
+                    if (condition) {
+                        
+                    }
                     let numberCurrentPage = document.getElementById("paginationButtonsContainers").childElementCount -2; // Nombre de page a afficher actuelle, avant de modifier ce nombre.  -2 car les btn suivant et précédent ne doive pas etre compter
                     if (numberCurrentPage != coursesInfo.NB_PAGES) {
                         generateButtons(coursesInfo.NB_PAGES); // Regénere les boutons de selection de page, dans le cas ou les filtres/recherche change

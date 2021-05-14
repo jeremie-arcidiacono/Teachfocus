@@ -14,6 +14,8 @@ session_start();
 require_once("php/globalFunc01.php");
 require_once("php/security.php");
 
+$errorMsg = array();
+
 if (!isUserLogged()) {
     header('Location: index.php', true, 301);
     exit();
@@ -51,18 +53,17 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         $lstIdDifficulties[] = $difficultie["idDifficulty"];
     }
 
-    $idRole = filter_input(INPUT_POST, "difficulty", FILTER_VALIDATE_INT);
+    // $idRole = filter_input(INPUT_POST, "difficulty", FILTER_VALIDATE_INT);
 
-
-    if (is_nan($idRole)) {
-        $errorMsg[] = "Erreur : Le role n'est pas valide (vide ou pas numerique) (C:1)";
-    } else {
-        if ($idRole == "0") {
-            $idRole = NULL;
-        } elseif (!in_array($idRole, $lstIdDifficulties)) {
-            $errorMsg[] = "Erreur : Le role n'existe pas (C:1)";
-        }
-    }
+    // if (is_nan($idRole)) {
+    //     $errorMsg[] = "Erreur : Le role n'est pas valide (vide ou pas numerique) (C:1)";
+    // } else {
+    //     if ($idRole == "0") {
+    //         $idRole = NULL;
+    //     } elseif (!in_array($idRole, $lstIdDifficulties)) {
+    //         $errorMsg[] = "Erreur : Le role n'existe pas (C:1)";
+    //     }
+    // }
 }
 
 $inputSubmit = filter_input(INPUT_POST, "submit", FILTER_SANITIZE_STRING);
@@ -76,7 +77,6 @@ $inputDescription = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRI
 $inputIdDifficulties = filter_input(INPUT_POST, "difficulties", FILTER_VALIDATE_INT);
 $currentDate = date('Y-m-d', (time()));
 
-$errorMsg = "";
 
 // Upload image part made by Alexandre PINTRAND
 
@@ -90,48 +90,49 @@ if ($inputSubmit == "Créer un cours") {
         $target_file = $target_dir . $uniqId . "." . $imageFileType;
 
         $check = getimagesize($_FILES["img"]["tmp_name"]);
-        
-        if ($inputPrice == null) {
-            $inputPrice == 0.00;
-        }
+
+        if ($inputPrice === false || $inputPrice == 0.00) {
+            $inputPrice = null;
+         }
 
         if ($check !== false) {
-            echo "Le fichier est une image - " . $check["mime"] . ".";
+            // "Le fichier est une image - " . $check["mime"] . ".";
             $uploadValid = 1;
         } else {
-            echo "Le fichier n'est pas une image.";
+            $errorMsg[] = "Le fichier n'est pas une image.";
             $uploadValid = 0;
         }
 
         if (file_exists($target_file)) {
-            echo "Désolé, le fichier existe déjà.";
+            $errorMsg[] = "Désolé, le fichier existe déjà.";
             $uploadValid = 0;
         }
 
         if ($_FILES["img"]["size"] > 2000000) {
-            echo "Désolé, votre fichier est trop volumineux.";
+            $errorMsg[] = "Désolé, votre fichier est trop volumineux.";
             $uploadValid = 0;
         }
 
         if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-            echo "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
+            $errorMsg[] = "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
             $uploadOk = 0;
         }
 
         if ($uploadValid == 0) {
-            echo "Désolé, votre fichier n'a pas été importer.";
+            $errorMsg[] = "Désolé, votre fichier n'a pas été importer.";
         } else {
             if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-                echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
+                // echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
             } else {
-                echo "Désolé, il y avait une erreur durant l'importation de votre fichier.";
+                $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
             }
         }
 
-        $isActive = 1;
-        $imageName = $uniqId . "." . $imageFileType;
+        if (count($errorMsg) <= 0) {
+            $isActive = 1;
+            $imageName = $uniqId . "." . $imageFileType;
 
-        $sql = $conn->prepare("INSERT INTO `course`
+            $sql = $conn->prepare("INSERT INTO `course`
             (`title`,
             `price`,
             `shortDescription`, 
@@ -146,12 +147,14 @@ if ($inputSubmit == "Créer un cours") {
             `idTheme`,
             `idLanguage`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $sql->execute([$inputCourseName, $inputPrice, $inputShortDescription, $inputDescription, $currentDate, $currentDate, $inputPrerequis, $imageName, $isActive, $_SESSION["User"]->idUser, $inputIdDifficulties, $inputIdTheme, $inputIdLangue]);
-        unset($isActive);
+            $sql->execute([$inputCourseName, $inputPrice, $inputShortDescription, $inputDescription, $currentDate, $currentDate, $inputPrerequis, $imageName, $isActive, $_SESSION["User"]->idUser, $inputIdDifficulties, $inputIdTheme, $inputIdLangue]);
+            unset($isActive);
+            header('Location: espaceEnseignant.php', true, 301); // TEMPORAIRE
+        }
     } else {
-        $errorMsg = "Une erreur est survenue. Veuillez vérifier votre saisie.";
+        $errorMsg[] = "Une erreur est survenue. Veuillez vérifier votre saisie.";
     }
-    //header('Location: espaceEnseignant.php', true, 301); // TEMPORAIRE
+    
 }
 
 ?>
@@ -246,7 +249,11 @@ if ($inputSubmit == "Créer un cours") {
                 <div>
                     <a href="createCourse.php"><input id="CreeCours" type="submit" class="btn btn-outline-primary" value="Créer un cours" name="submit"></a>
                 </div>
-                <?= $errorMsg ?>
+                <?php
+                foreach ($errorMsg as $value) {
+                    echo "$value<br>";
+                }
+                ?>
             </form>
         </section>
 

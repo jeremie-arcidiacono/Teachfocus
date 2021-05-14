@@ -41,9 +41,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
 $idUser = $_SESSION["User"]->idUser;
 
-$sql = $conn->prepare("SELECT * FROM course");
-$sql->execute();
-$coursUser = $sql->fetch();
+// C'est le bordel, faut refaire certains trucs
 $query = $conn->prepare(
     "SELECT*
      FROM course
