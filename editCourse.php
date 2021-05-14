@@ -21,6 +21,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     try {
         $conn = new PDO("mysql:host={$db_host};dbname={$db_name};charset=utf8", $db_user, $db_password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
         $sql = $conn->prepare("SELECT * FROM difficulty");
         $sql->execute();
@@ -49,7 +50,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 if ($id) {
     $idUser = getUserIdFromCourseById($id);
 
-    if ($_SESSION["User"]->userId != $idUser["idUser"]) {
+    if ($_SESSION["User"]->idUser != $idUser["idUser"]) {
         header('Location: index.php', true, 301);
         exit();
     }

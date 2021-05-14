@@ -11,6 +11,7 @@ try {
 	$conn = new PDO("mysql:host=$DB_servername;port=$DB_serverport;dbname=$DB_dbname", $DB_username, $DB_password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 	$sql = $conn->prepare("SELECT * FROM roles");
 	$sql->execute();
