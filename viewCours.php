@@ -16,6 +16,7 @@ require_once("php/class/User.php");
 session_start();
 //require_once("php/connection.php");
 require_once("php/globalFunc01.php");
+require_once("php/globalFunc02.php");
 require_once("php/security.php");
 
 $errorMsg = array(); // A chaque erreur le tableau se rempli, il serra afficher ensuite
@@ -30,25 +31,12 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     }
 }
 
-if (isset($_GET["disconnect"]) && !empty($_GET["disconnect"])) {
-    logOutUser();
-}
-
-// $sql = $conn->prepare(
-//     "SELECT * 
-//     FROM course"
-// );
-// $sql->execute();
-// $record = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-
-$idCourse = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
 
 
 
-// $sql = $conn->prepare("select * from v_coursesub where idCourse = ?");
-// $sql->execute([$idCourse]);
-// $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+$idCourse = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+
 
 
 $sql = $conn->prepare("SELECT * FROM v_coursesub WHERE idCourse = :idCours");
@@ -67,6 +55,13 @@ if ($result["isActive"] != 1) {
 $query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
 $query->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
 $query->execute();
+
+
+$idUserOwner = getUserIdFromCourseById($idCourse);
+$userIsOwnerOfCourse = false;
+if ($_SESSION["User"]->idUser == $idUserOwner["idUser"]) {
+    $userIsOwnerOfCourse = true;
+}
 
 ?>
 <!DOCTYPE html>
@@ -104,6 +99,11 @@ $query->execute();
     </div>
     </nav>
     </header>
+    <?php
+        if ($userIsOwnerOfCourse) { ?>
+            <a href="editCourse.php?id=<?=$idCourse?>"><input id="ModifCours" type="button" class="btn btn-outline-primary" value="Modifier le cours"></a>
+            <input id="SuppCours" type="button" class="btn btn-outline-primary" value="Supprimer le cours" onclick=""> <!-- a faire : fonction js qui affiche une confirmation. Si oui href=delete.php (ca va set en DB "isActive=-1" -->
+    <?php } ?>
     <!-- <section class="article-list">
         <div class="container" style="text-align : left; line-height: 10%;">
 
