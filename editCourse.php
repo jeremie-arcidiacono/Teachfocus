@@ -158,6 +158,10 @@ if ($id) {
         }
     }
 }
+else {
+    header('Location: espaceEnseignant.php', true, 301);
+    exit();
+}
 
 
 
