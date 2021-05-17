@@ -41,51 +41,58 @@ $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
 $sql->execute();
 $result = $sql->fetch(PDO::FETCH_ASSOC);
 
-if ($result["isActive"] != 1) {
-    header("HTTP/1.0 410 Gone");
-    echo "<h1>410 - Gone</h1>";
-    echo "<p>Ce cours n'est plus disponible ou bloqué par des administrateurs</p>";
-    echo "<a href=\"cours.php\"><button>Retour</button></a>";
-    die();
-}
-
-$query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
-$query->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
-$query->execute();
-
-
-// Récuération de la liste des cours déja possédé par l'user
-$lstEnrolledCourses = getCoursesEnrolledByUserId($_SESSION["User"]->idUser);
-
-$userIsEnroll = in_array($idCourse, $lstEnrolledCourses); // l'utilisateur s'est inscrit dans ce cours 
-
-if ($enroll == "true") {
-    // L'utilisateur veux s'inscrire au cours
-    if (!$userIsEnroll) { //pour etre sur quil ne s'inscrit pas plusieurs fois
-        $currentDate = date('Y-m-d', (time()));
-        $bPrice = ($result["promoPrice"] == null) ? $result["price"] : $result["promoPrice"];
-
-        $sql = $conn->prepare("INSERT INTO `course_enroll`(`idUser`, `idCourse`, `buyingDate`, `buyingPrice`) VALUES (
-            :idUser,
-            :idCours,
-            :bDate,
-            :bPrice
-        )");
-        $sql->bindParam(":idUser", $_SESSION["User"]->idUser, PDO::PARAM_INT);
-        $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
-        $sql->bindParam(":bDate", $currentDate, PDO::PARAM_STR);
-        $sql->bindParam(":bPrice", $bPrice, PDO::PARAM_STR);
-        $sql->execute();
-        $userIsEnroll = true;
+if ($result !== false) {
+    if ($result["isActive"] != 1) {
+        header("HTTP/1.0 410 Gone");
+        echo "<h1>410 - Gone</h1>";
+        echo "<p>Ce cours n'est plus disponible ou bloqué par des administrateurs</p>";
+        echo "<a href=\"cours.php\"><button>Retour</button></a>";
+        die();
+    }
+    
+    $query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
+    $query->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
+    $query->execute();
+    
+    
+    // Récuération de la liste des cours déja possédé par l'user
+    $lstEnrolledCourses = getCoursesEnrolledByUserId($_SESSION["User"]->idUser);
+    
+    $userIsEnroll = in_array($idCourse, $lstEnrolledCourses); // l'utilisateur s'est inscrit dans ce cours 
+    
+    if ($enroll == "true") {
+        // L'utilisateur veux s'inscrire au cours
+        if (!$userIsEnroll) { //pour etre sur quil ne s'inscrit pas plusieurs fois
+            $currentDate = date('Y-m-d', (time()));
+            $bPrice = ($result["promoPrice"] == null) ? $result["price"] : $result["promoPrice"];
+    
+            $sql = $conn->prepare("INSERT INTO `course_enroll`(`idUser`, `idCourse`, `buyingDate`, `buyingPrice`) VALUES (
+                :idUser,
+                :idCours,
+                :bDate,
+                :bPrice
+            )");
+            $sql->bindParam(":idUser", $_SESSION["User"]->idUser, PDO::PARAM_INT);
+            $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
+            $sql->bindParam(":bDate", $currentDate, PDO::PARAM_STR);
+            $sql->bindParam(":bPrice", $bPrice, PDO::PARAM_STR);
+            $sql->execute();
+            $userIsEnroll = true;
+        }
+    }
+    
+    
+    $idUserOwner = getUserIdFromCourseById($idCourse);
+    $userIsOwnerOfCourse = false;
+    if ($_SESSION["User"]->idUser == $idUserOwner["idUser"]) {
+        $userIsOwnerOfCourse = true; // l'utilisateur est le créateur du cours
     }
 }
-
-
-$idUserOwner = getUserIdFromCourseById($idCourse);
-$userIsOwnerOfCourse = false;
-if ($_SESSION["User"]->idUser == $idUserOwner["idUser"]) {
-    $userIsOwnerOfCourse = true; // l'utilisateur est le créateur du cours
+else{
+    // ICI a faire : 404
 }
+
+
 
 ?>
 <!DOCTYPE html>

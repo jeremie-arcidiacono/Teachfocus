@@ -106,9 +106,10 @@ function logInUser($userMail)
     $cookieCodeName = ENV_COOKIE_CODE;
     $cookieIdName = ENV_COOKIE_ID;
         // Création de cookie (quand il n'existe pas déja)
-        $sql = $conn->prepare("SELECT idSession AS :cookieIdName, cookieCode AS :cookieCodeName FROM connection_active"); // Verif if the future id and code will be unique
-        $sql->bindParam(":cookieIdName", $cookieIdName, PDO::PARAM_INT);
-        $sql->bindParam(":cookieCodeName", $cookieCodeName, PDO::PARAM_STR);
+        $sql = $conn->prepare("SELECT idSession AS \"$cookieIdName\", cookieCode AS \"$cookieCodeName\" FROM connection_active"); // Verif if the future id and code will be unique
+        // ICI les variables pour renommé les colonnes sont donner sans bindParam, car l'option "setAttribute(PDO::ATTR_EMULATE_PREPARES, false);" rend cela impossible
+        // $sql->bindParam(":cookieIdName", $cookieIdName);
+        // $sql->bindParam(":cookieCodeName", $cookieCodeName);
         $sql->execute();
         $resultCookie = $sql->setFetchMode(PDO::FETCH_ASSOC);
         $resultCookie = $sql->fetchAll();

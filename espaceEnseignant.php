@@ -47,9 +47,10 @@ $query = $conn->prepare(
     "SELECT*
      FROM course
      where idUser = ?
-     ");
+     "
+);
 $query->execute([$idUser]);
-$coursUser = $query->fetchAll(PDO ::FETCH_ASSOC);   
+$coursUser = $query->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -82,38 +83,43 @@ $coursUser = $query->fetchAll(PDO ::FETCH_ASSOC);
     </div>
     </nav>
     </header>
+    <section class='article-list'>
+        <div class="container">
+            <div class="intro">
+                <h2 class="text-center">Mes cours</h2>
+            </div>
+            <div class="CreeCours">
+                <div>
+                    <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Crée un cours"></a>
+                    <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Suprimer un cours"></a>
+                <div class="row articles" id="courses">
+                    <?php
 
-    <main>
-        <div class="recommendedLessons">
+                    foreach ($coursUser as $cours) { ?>
 
+                        
+                            <div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=<?= $cours["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $cours["codeBanner"] ?>">
+                                    <h3 class="name"><?= $cours["title"] ?></h3>
+                                    <p class="description"><?= $cours["shortDescription"] ?></p>
+                                    <?php
+                                    if (isset($cours["promoPrice"])) {
+                                        echo "<span class=\"noPromoPrice\">" . $cours["price"] . "   </span>";
+                                        echo "<span class=\"currentPrice\">" . $cours["promoPrice"] . "</span>";
+                                    } else if (isset($cours["price"])) {
+                                        echo "<span class=\"currentPrice\">" . $cours["price"] . "</span>";
+                                    } else {
+                                        echo "<span class=\"currentPrice\">Gratuit</span>";
+                                    }
+                                    ?>
+                                    <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button>
+                                </a>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
         </div>
-    </main>
-    <div class="CreeCours">
-
-        <div>
-            <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Crée un cours"></a>
-            <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Suprimer un cours"></a>
-
-            <?php
-        
-        foreach($coursUser as $cours){
-
-            echo "<br>";
-            echo "$cours[title]";
-            echo "<h3 class=\"name\">$cours[title]</h3>";
-            echo "<p class=\"description\">$cours[shortDescription]</p>";
-            echo "<a href=\"viewCours.php?id=$cours[idCourse]\"><p class=\"price\">";
-            echo "<span class=\"noPromoPrice\">$cours[title]</span>";
-            echo "<span class=\"currentPrice\">$cours[title]</span></p><br>";
-            echo "<button class=\"btn btn-outline-primary\" value=\"VoirCours\">Voir cours</button></a></div>";
-        }
-
-
-        
-        ?>
-        </div>
-
-    </div>
+    </section>
     <?php include 'php/environement/footer.php'; ?>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>

@@ -198,7 +198,7 @@ if ($inputSubmit == "Créer un cours") {
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>" selected><?= $language["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>"><?= $language["name"] ?></option>
-                            <?php } 
+                            <?php }
                             
                         } 
                         

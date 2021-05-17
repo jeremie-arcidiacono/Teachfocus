@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="/assets/css/styles.min.css?h=d1231e41cf353e69173ec69b26e99371">
 <link rel="stylesheet" href="assets/css/Registration-Form-with-Photo.css">
-<link rel="stylesheet" type="text/css" href="assets/scss/style.scss">
+<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/Forum---Thread-listing.css">
 <link rel="stylesheet" href="assets/css/Forum---Thread-listing-1.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
