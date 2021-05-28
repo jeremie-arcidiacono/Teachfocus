@@ -138,8 +138,14 @@ footer{
     </div>
         </div><!-- End: Forum - Thread listing -->
             <?php include 'php/environement/footer.php'; ?>
+            <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+            <script src="js/cookiesConsent.js"></script>
 </body>
 
 </html>

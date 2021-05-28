@@ -71,4 +71,22 @@
   opacity: 1;
 }
 
+div.disabledCourse
+{
+  /*pointer-events: none;*/
 
+  /* for "disabled" effect */
+  opacity: 0.5;
+  text-decoration: none;
+  /*background: #CCC;*/
+}
+
+.hideCourseMessage {
+  display: none;
+  
+}
+.disabledCourse:hover  .hideCourseMessage {
+  display: block;
+  color: red;
+  text-decoration: none;
+}

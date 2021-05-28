@@ -46,7 +46,7 @@ if ($result !== false) {
         header("HTTP/1.0 410 Gone");
         echo "<h1>410 - Gone</h1>";
         echo "<p>Ce cours n'est plus disponible ou bloqué par des administrateurs</p>";
-        echo "<a href=\"cours.php\"><button>Retour</button></a>";
+        echo "<a href=\"index.php\"><button>Retour</button></a>";
         die();
     }
     
@@ -90,6 +90,7 @@ if ($result !== false) {
 }
 else{
     // ICI a faire : 404
+    echo "eror 404 not found";
 }
 
 
@@ -206,11 +207,10 @@ else{
                         <!--FEATURE LIST START-->
                         <div class="generic_feature_list">
                             <ul>
-                                <li><span>durée de la vidéo</span> Durée</li>
-                                <li><span>description du cours</span> <?= $result["description"] ?></li>
-                                <li><span>détail</span> Détail</li>
-                                <li><span>nom du prof</span><?= $result["lastName"] . " " . $result["firstName"] ?></li>
-                                <li><span>24/7</span> Caracteristique</li>
+                                <li><span>Durée de la vidéo : </span> 0.05</li>
+                                <li><span>Description du cours : </span> <?= $result["description"] ?></li>
+                                <li><span>Détail : </span> <?= $result["shortDescription"] ?></li>
+                                <li><span>Crée par : </span><?= $result["lastName"] . " " . $result["firstName"] ?></li>
                             </ul>
                         </div>
                         <!--//FEATURE LIST END-->
@@ -230,17 +230,22 @@ else{
             </div>
         </div>
     </aside>
-    <video width="50%" height="auto" controls style="margin-top: 5%; margin-bottom: 10%; margin-left:3%; ">
+    <video width="50%" height="auto" controls style="margin-top: 5%; margin-bottom: 10%; margin-left : 25%; margin-right : 25%; ">
         <source src="assets/userMedia/vidCourseMain/vid01.mp4" type="video/mp4">
     </video>
 
 
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+    <script src="js/cookiesConsent.js"></script>
 </body>
 
 </html>

@@ -92,6 +92,10 @@ if ($inputSubmit == "Créer un cours") {
 
         $check = getimagesize($_FILES["img"]["tmp_name"]);
 
+        if (strlen($inputShortDescription) > 120) {
+            $errorMsg[] = "Le champs 'Short Description' est trop long (maximum 100 caractères)";
+        }
+
         if ($inputPrice === false || $inputPrice == 0.00) {
             $inputPrice = null;
          }
@@ -265,6 +269,12 @@ if ($inputSubmit == "Créer un cours") {
 
     </main>
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
+    <script src="js/cookiesConsent.js"></script>
     <script src="js/index.js"></script>
 </body>
 

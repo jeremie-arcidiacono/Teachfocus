@@ -274,6 +274,12 @@ else {
 
     </main>
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
+    <script src="js/cookiesConsent.js"></script>
     <script src="js/index.js"></script>
 </body>
 

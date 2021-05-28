@@ -4,9 +4,10 @@
  * @version : 1.0, 07/07/2021, Initial revision
 **/
 
-let pagination = null;
+let pagination;
 
 function getElements() {
+    console.log("dans la fonction getElements");
     pagination = document.querySelector('.pagination');
 }
 

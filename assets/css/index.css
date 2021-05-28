@@ -107,3 +107,17 @@ main>.recommendedLessons>div {
 .currentPrice {
     font-weight: bold;
 }
+
+#consent-popup {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem 8rem;
+    background: linear-gradient(135deg, #172a74, #21a9af);
+    color: white;
+}
+
+.hidden {
+    display: none;
+}

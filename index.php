@@ -67,6 +67,10 @@ $record = $sql->fetchAll(PDO ::FETCH_ASSOC);
     .btnList{
         margin-top: 5%;
     }
+    img {
+	    width: auto;
+	    max-height: 150px;
+    }
     </style>
 </head>
 

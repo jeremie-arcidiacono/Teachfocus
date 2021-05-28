@@ -4,7 +4,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
 <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
 <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
-<link rel="stylesheet" href="assets/css/Article-List.css">
 <link rel="stylesheet" href="assets/css/Article-ListCours.css">
 <link rel="stylesheet" href="assets/css/Filter.css">
 <link rel="stylesheet" href="assets/css/Footer-Dark.css">

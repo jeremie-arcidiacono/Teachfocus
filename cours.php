@@ -36,11 +36,6 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 /*foreach ($lstThemes as $value) {
     echo "option value=\"\">" . $value . "</option>";
 }*/
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -61,19 +56,23 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         header {
             height: 220px;
         }
+        img {
+	    width: auto;
+	    max-height: 150px;
+    }
     </style>
-    <script src="js/pagination.js"></script>
 </head>
 
-<body onload="getElements(); generateButtons();">
-    <?php include 'php/environement/header.php'; ?>
+<body>
+<?php include 'php/environement/header.php'; ?>
+    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
     </div>
     </div>
     </nav>
     </header>
     <!-- Start: Filter -->
     <div class="filter">
-            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button name="Rechercher" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
+            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style = "border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
 
             <div class="form-group" style="color: rgb(102,102,102);">
                 <select multiple id="multipleThemes" style="  color: rgb(102,102,102);" class="text-blue-grey">
@@ -121,25 +120,23 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         </nav>
     </div>
 
-    <!-- Start: Multiple Select MaterializeCSS -->
-    <div class="form-group" style="width: 350px;min-width: 350px;min-height: 50px;margin-top: 15px;padding-top: 41px;padding-bottom: 24px;color: rgb(102,102,102);">
-        <select multiple id="multiple_user" style="  color: rgb(102,102,102);" class="text-blue-grey">
-            <option value="1" style="  color: rgb(102,102,102);">Option 1</option>
-            <option value="2" style="  color: rgb(102,102,102);">Option 2</option>
-            <option value="3" style="  color: rgb(102,102,102);">Option 3</option>
-        </select>
-    </div><!-- End: Multiple Select MaterializeCSS -->
-
 
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="assets/js/Multi-Select-Dropdown-by-Jigar-Mistry.js"></script>
     <script src="assets/js/Multi-Select-MaterializeCSS.js"></script>
     <script src="js/func.js"></script>
+    <script src="js/cookiesConsent.js"></script>
     <script src="js/searchCourse.js"></script>
     <script src="js/callWS.js" onload="callWS_courses()"></script>
+    <script src="js/pagination.js" onload="getElements(); generateButtons();"></script>
     <script>
         function enterKeyPressed(event) {
             if (event.keyCode == 13) {

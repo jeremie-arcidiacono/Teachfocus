@@ -216,11 +216,17 @@ if (
 
     </div>
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js">
     </script>
     <script src="js/index.js"></script>
+    <script src="js/cookiesConsent.js"></script>
 </body>
 
 </html>

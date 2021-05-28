@@ -79,3 +79,16 @@ function updateCourseById($id, $title, $price, $shortDescription, $description, 
     $query->bindParam(":idCours", $id, PDO::PARAM_INT);
     $query->execute();
 }
+
+function getUserCourses($idUser) {
+    global $conn;
+
+    $query = $conn->prepare("SELECT course_enroll.idCourse, course.title, course.codeBanner, course.shortDescription, course.price, course.promoPrice 
+                            FROM course_enroll 
+                            JOIN course 
+                            ON course_enroll.idCourse = course.idCourse 
+                            WHERE course_enroll.idUser = :idUser");
+    $query->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+    $query->execute();
+    return $query->fetchAll(PDO::FETCH_ASSOC);
+}

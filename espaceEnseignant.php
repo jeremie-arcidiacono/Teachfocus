@@ -67,11 +67,16 @@ $coursUser = $query->fetchAll(PDO::FETCH_ASSOC);
     ?>
     <style>
         footer {
-            margin-top: 45%;
+            margin-top: 15%;
         }
 
         header {
             height: 220px;
+        }
+
+        img {
+            width: auto;
+            max-height: 150px;
         }
     </style>
 </head>
@@ -83,46 +88,62 @@ $coursUser = $query->fetchAll(PDO::FETCH_ASSOC);
     </div>
     </nav>
     </header>
-    <section class='article-list'>
+    <section class="article-list">
         <div class="container">
             <div class="intro">
                 <h2 class="text-center">Mes cours</h2>
             </div>
             <div class="CreeCours">
                 <div>
-                    <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Crée un cours"></a>
-                    <a href="createCourse.php"><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Suprimer un cours"></a>
-                <div class="row articles" id="courses">
-                    <?php
+                    <a href="createCourse.php" ><input id="CreeCours" type="button" class="btn btn-outline-primary" value="Crée un cours"></a>
 
-                    foreach ($coursUser as $cours) { ?>
-
-                        
-                            <div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=<?= $cours["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $cours["codeBanner"] ?>">
-                                    <h3 class="name"><?= $cours["title"] ?></h3>
-                                    <p class="description"><?= $cours["shortDescription"] ?></p>
-                                    <?php
-                                    if (isset($cours["promoPrice"])) {
-                                        echo "<span class=\"noPromoPrice\">" . $cours["price"] . "   </span>";
-                                        echo "<span class=\"currentPrice\">" . $cours["promoPrice"] . "</span>";
-                                    } else if (isset($cours["price"])) {
-                                        echo "<span class=\"currentPrice\">" . $cours["price"] . "</span>";
-                                    } else {
-                                        echo "<span class=\"currentPrice\">Gratuit</span>";
-                                    }
-                                    ?>
-                                    <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button>
-                                </a>
-                            </div>
-                        </div>
-                    <?php } ?>
                 </div>
+            </div>
+            <div style="margin-top: 7%;"class="row articles" id="courses">
+                <?php
+
+                foreach ($coursUser as $cours) { ?>
+                    <div class="col-sm-6 col-md-4 item <?php if ($cours["isActive"] != 1) {
+                                                            echo "disabledCourse";
+                                                        } ?>"><a href="viewCours.php?id=<?= $cours["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $cours["codeBanner"] ?>">
+                            <h3 class="name"><?= $cours["title"] ?></h3>
+                            <p class="description"><?= $cours["shortDescription"] ?></p>
+                            <?php
+                            if (isset($cours["promoPrice"])) {
+                                echo "<span class=\"noPromoPrice\">" . $cours["price"] . "   </span>";
+                                echo "<span class=\"currentPrice\">" . $cours["promoPrice"] . "</span>";
+                            } else if (isset($cours["price"])) {
+                                echo "<span class=\"currentPrice\">" . $cours["price"] . "</span>";
+                            } else {
+                                echo "<span class=\"currentPrice\">Gratuit</span>";
+                            }
+                            ?>
+                            <!-- <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button> -->
+                            <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer" onclick="deleteCoursPopup('<?= $cours['idCourse']; ?>', '<?= $cours['title']; ?>')">
+                        </a><?php
+                            if ($cours["isActive"] == 0) {
+                                echo "<div class=\"hideCourseMessage\">Cours bloqué par un administrateur de Teachfocus.</div>";
+                            }
+                            if ($cours["isActive"] == -1) {
+                                echo "<div class=\"hideCourseMessage\">Vous avez décidé de supprimer ce sours. Vous pouvez encore récupérez votre cours dans les 30 jours qui suivent votre action.</div>";
+                            }
+                            ?>
+                            </div>
+                    <?php } ?>
+                
             </div>
         </div>
     </section>
     <?php include 'php/environement/footer.php'; ?>
+    <div id="consent-popup" class="hidden">
+        <p>En utilisant ce site, vous acceptez les <a href="#">termes et les conditions</a>.
+            Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
+        </p>
+    </div>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/cookiesConsent.js"></script>
+    <script src="js/deleteCourse.js"></script>
     <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js">
     </script>
     <!--script bootstrap / jquery / cloudflare-->

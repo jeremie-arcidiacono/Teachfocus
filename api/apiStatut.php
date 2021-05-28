@@ -3,7 +3,7 @@
 $apiStatut = [
     "GLOBAL" => true,
     "getCourses.php" => true,
-    "getCoursesStatistics.php" => true
+    "getCoursesStatistics.php" => false
 ];
 
 // Vérifie si l'API est mise volontairement en maintenance
