@@ -60,6 +60,9 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 	    width: auto;
 	    max-height: 150px;
     }
+    option{
+        font-family: Arial, Helvetica, sans-serif;
+    }
     </style>
 </head>
 
@@ -85,18 +88,18 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
                 </select>
             </div>
             <select>
-                <option value="" hidden>Difficultés</option>
+                <option value="" hidden >Difficultés</option>
                 <?php
                 foreach ($lstDifficulties as $test) {
-                    echo "<option value=\"\"> $test[name]</option>";
+                    echo "<option style='font-family:arial;' value=\"\"> $test[name]</option>";
                 }
                 ?>
 
             </select>
             <select>
                 <option value="" hidden>Prix</option>
-                <option value="">Gratuit</option>
-                <option value="">Payant</option>
+                <option style='font-family:arial;'value="">Gratuit</option>
+                <option style='font-family:arial;'value="">Payant</option>
             </select>
 
 

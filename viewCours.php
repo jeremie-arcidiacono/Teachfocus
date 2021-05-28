@@ -208,7 +208,7 @@ else{
                         <div class="generic_feature_list">
                             <ul>
                                 <li><span>Durée de la vidéo : </span> 0.05</li>
-                                <li><span>Description du cours : </span> <?= $result["description"] ?></li>
+                                <!--<li><span>Description du cours : </span> <?= $result["description"] ?></li> -->
                                 <li><span>Détail : </span> <?= $result["shortDescription"] ?></li>
                                 <li><span>Crée par : </span><?= $result["lastName"] . " " . $result["firstName"] ?></li>
                             </ul>
