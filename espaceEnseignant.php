@@ -118,9 +118,9 @@ $coursUser = $query->fetchAll(PDO::FETCH_ASSOC);
                                 echo "<span class=\"currentPrice\">Gratuit</span>";
                             }
                             ?>
-                            <!-- <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button> -->
-                            <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer" onclick="deleteCoursPopup('<?= $cours['idCourse']; ?>', '<?= $cours['title']; ?>')">
-                        </a><?php
+                            <!-- <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button> --></a>
+                            <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer" onclick="deleteCoursePopup('<?= $cours['idCourse']; ?>', '<?= $cours['title']; ?>')">
+                        <?php
                             if ($cours["isActive"] == 0) {
                                 echo "<div class=\"hideCourseMessage\">Cours bloqué par un administrateur de Teachfocus.</div>";
                             }

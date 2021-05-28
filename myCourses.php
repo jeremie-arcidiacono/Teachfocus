@@ -26,6 +26,11 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     }
 }
 
+if (!isUserLogged()) {
+    header('Location: index.php');
+    exit();
+}
+
 $courses = getUserCourses($_SESSION['User']->idUser);
 
 ?>

@@ -4,6 +4,8 @@ require_once("protectedInfo/infoDB.php");
 require_once("class/User.php");
 session_start();
 //require_once("php/connection.php");
+require_once("globalFunc01.php");
+require_once("globalFunc02.php");
 require_once("security.php");
 
 $idCourse = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
@@ -19,6 +21,11 @@ if ($idCourse) {
         } catch (PDOEXCEPTION $e) {
             $e->getMessage();
         }
+    }
+
+    if (!isUserLogged()) {
+        header('Location: index.php');
+        exit();
     }
 
     $sql = $conn->prepare("SELECT * FROM course WHERE idCourse = :idCours");
@@ -45,7 +52,7 @@ if ($idCourse) {
         echo "<h1>410 - Gone</h1>";
         echo "<p>Ce cours à déjà été supprimé le " . $result["dateDeleteDemand"] . "</p>";
         $nbDayRemind=0; // Nombre de jour restant avant suppréssion définitive (todo: le calcul)
-        echo "<p>Vous disposez de <i>$nbDayRemind<i> pour le réactiver en contactant les administrateurs si vous changer d'avis</p>";
+        echo "<p>Vous disposez de <i>$nbDayRemind</i> pour le réactiver en contactant les administrateurs si vous changer d'avis</p>";
         echo "<a href=\"../espaceEnseignant.php\"><button>Retour</button></a>";
         die();
     }
@@ -67,10 +74,11 @@ if ($idCourse) {
     }
     else {
         // Début de la suppression
-        $sql = $conn->prepare("UPDATE course SET isActive = -1 WHERE idCourse = :idCours");
+        $currentDate = date('Y-m-d', (time()));
+        $sql = $conn->prepare("UPDATE course SET isActive = -1, dateDeleteDemand = NOW() WHERE idCourse = :idCours");
         $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
         $sql->execute();
-        header('Location: index.php', true, 301);
+        header('Location: ../index.php', true, 301);
         die();
     }
 }
