@@ -21,3 +21,10 @@
                 <form class="form-inline mr-auto" target="_self">
                     <div class="form-group mb-0"><label for="search-field"></label></div>
                 </form><span class="navbar-text"> </span>
+                <?php 
+        if (!isUserLogged()) { ?>
+    <a class="btn btn-light action-button" role="button" href="sign-up.php">S'inscrire</a>
+    <a class="btn btn-light action-button" role="button" href="sign-in.php">Connexion</a>
+    <?php } else { ?>
+    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
+    <?php } ?>

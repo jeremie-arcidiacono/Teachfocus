@@ -76,13 +76,6 @@ $record = $sql->fetchAll(PDO ::FETCH_ASSOC);
 
 <body>
     <?php include 'php/environement/header.php'; ?>
-    <?php 
-        if (!isUserLogged()) { ?>
-    <a class="btn btn-light action-button" role="button" href="sign-up.php">S'inscrire</a>
-    <a class="btn btn-light action-button" role="button" href="sign-in.php">Connexion</a>
-    <?php } else { ?>
-    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
-    <?php } ?>
     </div>
     </div>
     </nav>

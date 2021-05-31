@@ -172,7 +172,6 @@ if (
 
 
     <?php include 'php/environement/header.php'; ?>
-    <a class="btn btn-light action-button" role="button" href="sign-in.php">Connexion</a>
     </div>
     </div>
     </nav>

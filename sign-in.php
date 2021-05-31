@@ -124,7 +124,6 @@ if (isset($_POST["email"]) && isset($_POST["mdp"])) {
 
 <body>
     <?php include 'php/environement/header.php'; ?>
-    <a class="btn btn-light action-button" role="button" href="sign-up.php">S'inscrire</a>
     </div>
     </div>
     </nav>

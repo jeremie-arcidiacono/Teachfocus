@@ -177,7 +177,6 @@ if ($inputSubmit == "Créer un cours") {
 
 <body>
     <?php include 'php/environement/header.php'; ?>
-    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
     </div>
     </div>
     </nav>
