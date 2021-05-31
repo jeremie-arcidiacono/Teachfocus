@@ -25,7 +25,7 @@ function checkRequestMethod($requestMethod, ...$allowedRequestMethods)
 // Vérifie si une variable existes et soit valide
 function checkVarExist($var) 
 {
-    return isset($var) && $var != "";
+    return isset($var) && $var != "" && $var != null;
 }
 
 function getConnexionDB()

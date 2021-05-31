@@ -120,13 +120,6 @@ else{
 
 <body>
     <?php include 'php/environement/header.php'; ?>
-    <?php
-    if (!isUserLogged()) { ?>
-        <a class="btn btn-light action-button" role="button" href="sign-up.php">S'inscrire</a>
-        <a class="btn btn-light action-button" role="button" href="sign-in.php">Connexion</a>
-    <?php } else { ?>
-        <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
-    <?php } ?>
     </div>
     </div>
     </nav>
@@ -134,7 +127,7 @@ else{
     <?php
         if ($userIsOwnerOfCourse) { ?>
             <a href="editCourse.php?id=<?=$idCourse?>"><input id="ModifCours" type="button" class="btn btn-outline-primary" value="Modifier le cours"></a>
-            <input id="SuppCours" type="button" class="btn btn-outline-primary" value="Supprimer le cours" onclick=""> <!-- a faire : fonction js qui affiche une confirmation. Si oui href=delete.php (ca va set en DB "isActive=-1" -->
+            <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer" onclick="deleteCoursePopup('<?= $result['idCourse']; ?>', '<?= $result['title']; ?>')">
     <?php } ?>
     <!-- <section class="article-list">
         <div class="container" style="text-align : left; line-height: 10%;">
@@ -241,6 +234,7 @@ else{
             Merci d'<a id="accept" href="#"><b>accepter</b></a> cela avant d'utiliser notre site.
         </p>
     </div>
+    <script src="js/deleteCourse.js"></script>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js"></script>

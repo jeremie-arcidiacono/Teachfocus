@@ -87,7 +87,9 @@ function getUserCourses($idUser) {
                             FROM course_enroll 
                             JOIN course 
                             ON course_enroll.idCourse = course.idCourse 
-                            WHERE course_enroll.idUser = :idUser");
+                            WHERE 
+                                course_enroll.idUser = :idUser
+                                && course.isActive = 1");
     $query->bindParam(":idUser", $idUser, PDO::PARAM_INT);
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);

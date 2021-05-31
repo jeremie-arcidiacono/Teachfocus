@@ -64,7 +64,6 @@ $courses = getUserCourses($_SESSION['User']->idUser);
 </head>
 <body> 
 <?php include 'php/environement/header.php'; ?>
-    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
     </div>
     </div>
     </nav>
@@ -87,17 +86,14 @@ $courses = getUserCourses($_SESSION['User']->idUser);
                         <div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=<?= $course["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $course["codeBanner"]?>"></a>
                         <h3 class="name"><?= $course["title"]?></h3>
                         <p class="description"><?= $course["shortDescription"]?></p>
-                        <a href="viewCours.php?id=<?= $course["idCourse"]?>"><p class="price">
-                        <span class=\"noPromoPrice\"><?= $course["price"] ?></span>
-                        <span class=\"currentPrice\"><?= $course["promoPrice"] ?></span></p><br>
+                        <a href="viewCours.php?id=<?= $course["idCourse"]?>"><br>
                         <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div> <?php
                     }
                     else if ($course["price"] !== null) { ?>
                         <div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=<?= $course["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $course["codeBanner"] ?>"></a>
                         <h3 class="name"><?= $course["title"] ?></h3>
                         <p class="description"><?= $course["shortDescription"] ?></p>
-                        <a href="viewCours.php?id=<?= $course ["idCourse"]?>"><p class="price">
-                        <span class=\"currentPrice\"><?= $course["price"] ?></span></p><br>
+                        <a href="viewCours.php?id=<?= $course ["idCourse"]?>"><br>
                         <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div>
                         <?php
                     }
@@ -105,8 +101,7 @@ $courses = getUserCourses($_SESSION['User']->idUser);
                         <div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=<?= $course["idCourse"] ?>"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/<?= $course["codeBanner"]?>"></a>
                         <h3 class="name"><?= $course["title"] ?></h3>
                         <p class="description"><?= $course["shortDescription"] ?></p>
-                        <a href="viewCours.php?id=<?= $course["idCourse"] ?>"><p class="price">
-                        <span class=\"currentPrice\">Gratuit</span></p><br>
+                        <a href="viewCours.php?id=<?= $course["idCourse"] ?>"><br>
                         <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div>`
                    <?php } ?>
 
