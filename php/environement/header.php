@@ -7,7 +7,6 @@
             <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="myCourses.php">Mes cours</a></li>
                     <?php
                     if (isUserLogged()) {
                         if ($_SESSION["User"]->userType == "enseignant") { ?>
@@ -15,9 +14,9 @@
                     <?php }} ?>
                     <?php
                     if (isUserLogged()) {
-                        if ($_SESSION["User"]->userType == "élève") { ?>
-                        <li class="nav-item"><a class="nav-link" href="mesCours.php">Mes cours</a></li>
-                    <?php }} ?>
+                         ?>
+                        <li class="nav-item"><a class="nav-link" href="myCourses.php">Mes cours</a></li>
+                    <?php } ?>
                 </ul>
                 <form class="form-inline mr-auto" target="_self">
                     <div class="form-group mb-0"><label for="search-field"></label></div>

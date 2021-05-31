@@ -44,7 +44,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>myCourses</title>
+    <title>Cours</title>
     <?php
     include("php/environement/links.php");
     ?>
@@ -56,18 +56,20 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         header {
             height: 220px;
         }
+
         img {
-	    width: auto;
-	    max-height: 150px;
-    }
-    option{
-        font-family: Arial, Helvetica, sans-serif;
-    }
+            width: auto;
+            max-height: 150px;
+        }
+
+        option {
+            font-family: Arial, Helvetica, sans-serif;
+        }
     </style>
 </head>
 
 <body>
-<?php include 'php/environement/header.php'; ?>
+    <?php include 'php/environement/header.php'; ?>
     <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
     </div>
     </div>
@@ -75,20 +77,23 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     </header>
     <!-- Start: Filter -->
     <div class="filter">
-            <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style = "border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
-
+        <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style="border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
+        <aside style="float:left;">
             <div class="form-group" style="color: rgb(102,102,102);">
-                <select multiple id="multipleThemes" style="  color: rgb(102,102,102);" class="text-blue-grey">
-                    <option value="" hidden>Thèmes</option>
+
+                <h3>Thèmes</h3><br>
+                <ul role="listbox" tabindex="0" style="list-style-type: none; width: 300px; height: 500px; overflow: scroll;">
                     <?php
                     foreach ($lstThemes as $test) {
-                        echo "<option value=\"\"> $test[name]</option>";
+                        /* echo "<option value=\"\"> $test[name]</option>";*/
+                        echo "<li tabindex='-1' role='option' aria-checked='false'>$test[name]<input type='checkbox'><li>";
                     }
                     ?>
+                </ul>
                 </select>
             </div>
             <select>
-                <option value="" hidden >Difficultés</option>
+                <option value="" hidden>Difficultés</option>
                 <?php
                 foreach ($lstDifficulties as $test) {
                     echo "<option style='font-family:arial;' value=\"\"> $test[name]</option>";
@@ -98,12 +103,14 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
             </select>
             <select>
                 <option value="" hidden>Prix</option>
-                <option style='font-family:arial;'value="">Gratuit</option>
-                <option style='font-family:arial;'value="">Payant</option>
+                <option style='font-family:arial;' value="">Gratuit</option>
+                <option style='font-family:arial;' value="">Payant</option>
             </select>
 
 
     </div><!-- End: Filter -->
+    </aside>
+
     <!-- Start: Article List -->
     <section class="article-list">
         <div class="container">
