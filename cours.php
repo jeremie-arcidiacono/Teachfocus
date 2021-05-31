@@ -70,7 +70,6 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
 <body>
     <?php include 'php/environement/header.php'; ?>
-    <a class="btn btn-light action-button" role="button" href="index.php?disconnect=true">Déconnexion</a>
     </div>
     </div>
     </nav>
@@ -78,15 +77,14 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     <!-- Start: Filter -->
     <div class="filter">
         <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style="border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
-        <aside style="float:left;">
+        <aside style="float:left; width: 400px;">
             <div class="form-group" style="color: rgb(102,102,102);">
-
                 <h3>Thèmes</h3><br>
-                <ul role="listbox" tabindex="0" style="list-style-type: none; width: 300px; height: 500px; overflow: scroll;">
+                <ul role="listbox" tabindex="0" style="list-style-type: none;width: 400px; height: 500px; overflow-y: scroll;">
                     <?php
-                    foreach ($lstThemes as $test) {
+                    foreach ($lstThemes as $theme) {
                         /* echo "<option value=\"\"> $test[name]</option>";*/
-                        echo "<li tabindex='-1' role='option' aria-checked='false'>$test[name]<input type='checkbox'><li>";
+                        echo "<li tabindex='-1' role='option' aria-checked='false'><input type='checkbox' name=\"filter_$theme[idTheme]\" id=\"filter_$theme[idTheme]\" style='margin-right:5px;'><label for=\"filter_$theme[idTheme]\">$theme[name]</label></li>";
                     }
                     ?>
                 </ul>
@@ -95,12 +93,13 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
             <select>
                 <option value="" hidden>Difficultés</option>
                 <?php
-                foreach ($lstDifficulties as $test) {
-                    echo "<option style='font-family:arial;' value=\"\"> $test[name]</option>";
+                foreach ($lstDifficulties as $difficultie) {
+                    echo "<option style='font-family:arial;' value=\"\"> $difficultie[name]</option>";
                 }
                 ?>
 
             </select>
+            <br>
             <select>
                 <option value="" hidden>Prix</option>
                 <option style='font-family:arial;' value="">Gratuit</option>
@@ -110,25 +109,26 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
     </div><!-- End: Filter -->
     </aside>
-
-    <!-- Start: Article List -->
-    <section class="article-list">
-        <div class="container">
-            <!-- Start: Intro -->
-            <div class="intro"></div><!-- End: Intro -->
-            <h2 class="text-center">Cours</h2><!-- Start: Articles -->
-            <div class="row articles" id="courses">
-                <?php //displayCoursesList($courseList) ;
-                ?>
-            </div><!-- End: Articles -->
+    <main style="margin-left:25%; ">
+        <!-- Start: Article List -->
+        <section class="article-list">
+            <div class="container">
+                <!-- Start: Intro -->
+                <div class="intro"></div><!-- End: Intro -->
+                <h2 class="text-center">Cours</h2><!-- Start: Articles -->
+                <div class="row articles" id="courses">
+                    <?php //displayCoursesList($courseList) ;
+                    ?>
+                </div><!-- End: Articles -->
+            </div>
+            </div>
+        </section><!-- End: Article List -->
+        <div class="thread-list-head">
+            <nav class="thread-pages">
+                <ul class="pagination" id="paginationButtonsContainers"></ul>
+            </nav>
         </div>
-        </div>
-    </section><!-- End: Article List -->
-    <div class="thread-list-head">
-        <nav class="thread-pages">
-            <ul class="pagination" id="paginationButtonsContainers"></ul>
-        </nav>
-    </div>
+    </main>
 
 
     <?php include 'php/environement/footer.php'; ?>

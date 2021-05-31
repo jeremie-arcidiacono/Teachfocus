@@ -12,7 +12,7 @@
   text-align: center;
 }
 
-.filter input {
+.filter input#search{
   margin: 30px;
   width: 60%;
   padding: 20px;
