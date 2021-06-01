@@ -1,3 +1,3 @@
 # Teachfocus
-# New e-learning website
-# Coming soon
+New e-learning website
+Coming soon
