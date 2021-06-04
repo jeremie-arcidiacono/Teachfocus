@@ -49,48 +49,51 @@ if ($result !== false) {
         echo "<a href=\"index.php\"><button>Retour</button></a>";
         die();
     }
-    
+
     $query = $conn->prepare("UPDATE course SET nbClick = nbClick + 1 WHERE idCourse = :idCours");
     $query->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
     $query->execute();
-    
-    
+
+
     // Récuération de la liste des cours déja possédé par l'user
-    $lstEnrolledCourses = getCoursesEnrolledByUserId($_SESSION["User"]->idUser);
-    
-    $userIsEnroll = in_array($idCourse, $lstEnrolledCourses); // l'utilisateur s'est inscrit dans ce cours 
-    
-    if ($enroll == "true") {
-        // L'utilisateur veux s'inscrire au cours
-        if (!$userIsEnroll) { //pour etre sur quil ne s'inscrit pas plusieurs fois
-            $currentDate = date('Y-m-d', (time()));
-            $bPrice = ($result["promoPrice"] == null) ? $result["price"] : $result["promoPrice"];
-    
-            $sql = $conn->prepare("INSERT INTO `course_enroll`(`idUser`, `idCourse`, `buyingDate`, `buyingPrice`) VALUES (
+    if (isUserLogged()) {
+        $lstEnrolledCourses = getCoursesEnrolledByUserId($_SESSION["User"]->idUser);
+
+        $userIsEnroll = in_array($idCourse, $lstEnrolledCourses); // l'utilisateur s'est inscrit dans ce cours 
+
+        if ($enroll == "true") {
+            // L'utilisateur veux s'inscrire au cours
+            if (!$userIsEnroll) { //pour etre sur quil ne s'inscrit pas plusieurs fois
+                $currentDate = date('Y-m-d', (time()));
+                $bPrice = ($result["promoPrice"] == null) ? $result["price"] : $result["promoPrice"];
+
+                $sql = $conn->prepare("INSERT INTO `course_enroll`(`idUser`, `idCourse`, `buyingDate`, `buyingPrice`) VALUES (
                 :idUser,
                 :idCours,
                 :bDate,
                 :bPrice
             )");
-            $sql->bindParam(":idUser", $_SESSION["User"]->idUser, PDO::PARAM_INT);
-            $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
-            $sql->bindParam(":bDate", $currentDate, PDO::PARAM_STR);
-            $sql->bindParam(":bPrice", $bPrice, PDO::PARAM_STR);
-            $sql->execute();
-            $userIsEnroll = true;
+                $sql->bindParam(":idUser", $_SESSION["User"]->idUser, PDO::PARAM_INT);
+                $sql->bindParam(":idCours", $idCourse, PDO::PARAM_INT);
+                $sql->bindParam(":bDate", $currentDate, PDO::PARAM_STR);
+                $sql->bindParam(":bPrice", $bPrice, PDO::PARAM_STR);
+                $sql->execute();
+                $userIsEnroll = true;
+            }
+        }
+        $idUserOwner = getUserIdFromCourseById($idCourse);
+        $userIsOwnerOfCourse = false;
+        if ($_SESSION["User"]->idUser == $idUserOwner["idUser"]) {
+            $userIsOwnerOfCourse = true; // l'utilisateur est le créateur du cours
         }
     }
-    
-    
-    $idUserOwner = getUserIdFromCourseById($idCourse);
-    $userIsOwnerOfCourse = false;
-    if ($_SESSION["User"]->idUser == $idUserOwner["idUser"]) {
-        $userIsOwnerOfCourse = true; // l'utilisateur est le créateur du cours
-    }
-}
-else{
-    // ICI a faire : 404
-    echo "eror 404 not found";
+} else {
+    // TODO :  a faire : 404
+    header("HTTP/1.1 404 Not Found");
+    echo "<h1>404 - Not Found</h1>";
+    echo "<p>Ooops... Cours non trouvé !</p>";
+    echo "<a href=\"../index.php\"><button>Accueil</button></a>";
+    exit();
 }
 
 
@@ -108,13 +111,13 @@ else{
     include("php/environement/links.php");
     ?>
     <style>
-        footer {
-            margin-top: 10%;
-        }
+    footer {
+        margin-top: 10%;
+    }
 
-        header {
-            height: 220px;
-        }
+    header {
+        height: 220px;
+    }
     </style>
 </head>
 
@@ -125,10 +128,15 @@ else{
     </nav>
     </header>
     <?php
-        if ($userIsOwnerOfCourse) { ?>
-            <a href="editCourse.php?id=<?=$idCourse?>"><input id="ModifCours" type="button" class="btn btn-outline-primary" value="Modifier le cours"></a>
-            <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer" onclick="deleteCoursePopup('<?= $result['idCourse']; ?>', '<?= $result['title']; ?>')">
-    <?php } ?>
+    if (isUserLogged()) {
+        if ($userIsOwnerOfCourse) { ?><br>
+    <center><a href="editCourse.php?id=<?= $idCourse ?>"><input id="ModifCours" type="button" class="btn btn-outline-primary"
+            value="Modifier le cours"></a>
+    <input id="DeleteCours" type="button" class="btn btn-outline-primary" value="Supprimer"
+        onclick="deleteCoursePopup('<?= $result['idCourse']; ?>', '<?= $result['title']; ?>')">
+    <?php }
+    } ?>
+    </center>
     <!-- <section class="article-list">
         <div class="container" style="text-align : left; line-height: 10%;">
 
@@ -151,10 +159,10 @@ else{
 
         </div>
     </section>-->
-
-    <aside>
+                                                       
+   <center> <aside>
         <div class="container">
-            <div id="generic_price_table">
+            <div id="generic_price_table" >
 
                 <div class="container">
 
@@ -201,7 +209,7 @@ else{
                         <div class="generic_feature_list">
                             <ul>
                                 <li><span>Durée de la vidéo : </span> 0.05</li>
-                                <!--<li><span>Description du cours : </span> <?= $result["description"] ?></li> -->
+                                <!--<li><span>Description du cours : </span> </li> -->
                                 <li><span>Détail : </span> <?= $result["shortDescription"] ?></li>
                                 <li><span>Crée par : </span><?= $result["lastName"] . " " . $result["firstName"] ?></li>
                             </ul>
@@ -210,11 +218,17 @@ else{
 
                         <!--BUTTON START-->
                         <div class="generic_price_btn clearfix">
-                            <?php if($userIsEnroll) { ?>
-                                <a class="" href="" ?>Commencer à étudier</a> <!-- va ouvrire la page pour voir le contenu du cours-->
-                            <?php } else {?>
-                                <a class="" href="<?= $_SERVER['PHP_SELF']."?id=" . $idCourse . "&enroll=true" ?>">Acheter</a>
-                            <?php }?>
+                            <?php if (isUserLogged()) {
+                                if ($userIsEnroll) { ?>
+                            <a class="" href="" ?>Commencer à étudier</a>
+                            <!-- va ouvrire la page pour voir le contenu du cours-->
+                            <?php } else { ?>
+                            <a class=""
+                                href="<?= $_SERVER['PHP_SELF'] . "?id=" . $idCourse . "&enroll=true" ?>">Acheter</a>
+                            <?php }
+                            } else { ?>
+                            <a class="" href="sign-in.php">Connectez-vous pour acheter</a>
+                            <?php } ?>
                         </div>
                         <!--//BUTTON END-->
 
@@ -223,7 +237,15 @@ else{
             </div>
         </div>
     </aside>
-    <video width="50%" height="auto" controls style="margin-top: 5%; margin-bottom: 10%; margin-left : 25%; margin-right : 25%; ">
+                            </center>
+    <div style="width:30%; margin-left:35%;">
+    <p style="text-align:center;">
+    <h2 style="text-align:center;">Description :</h2><br>
+    <?= $result["description"] ?>
+    </p>
+                            </div>
+    <video width="50%" height="auto" controls
+        style="margin-top: 5%; margin-bottom: 10%; margin-left : 25%; margin-right : 25%; ">
         <source src="assets/userMedia/vidCourseMain/vid01.mp4" type="video/mp4">
     </video>
 
@@ -237,7 +259,8 @@ else{
     <script src="js/deleteCourse.js"></script>
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js"></script>
+    <script id="bs-live-reload" data-sseport="51315" data-lastchange="1614930772253" src="assets/js/livereload.js">
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="js/cookiesConsent.js"></script>
 </body>

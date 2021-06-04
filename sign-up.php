@@ -193,6 +193,11 @@ if (
                 <div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="choix" id="choix" value="eleve" <?= $eleveChecked; ?>>Elève</label></div>
                 <div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="choix" id="choix" value="professeur" <?= $professeurChecked; ?>>Professeur</label>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <div class="g-recaptcha" data-sitekey="<?= getenv('GOOGLE_RECAPTCHA_KEY') ?>"></div>
+                    </div>
+                </div>
                 <div class="form-group"><button class="btn btn-primary btn-block" type="submit" name="envoyer" id="envoyer" value="Envoyer">S'inscrire</button></div>
                 <div class="form-group"><input class="btn btn-primary btn-block" type="reset" name="effacer" id="effacer" value="Effacer" onclick="resetSignUpForm()"><a class="forgot" style="color:#ffff;" href="#">Vous avez déjà un compte? Connectez-vous ici</a>
             </form>
@@ -226,6 +231,7 @@ if (
     </script>
     <script src="js/index.js"></script>
     <script src="js/cookiesConsent.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 
 </html>

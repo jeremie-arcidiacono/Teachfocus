@@ -78,9 +78,9 @@ require_once("php/security.php");
                         </div>
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title"><a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven">Que faire si un cours que j'ai créé a été bloqué par un administrteur ?</a></h4>
+                                <h4 class="panel-title"><a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Que faire si un cours que j'ai créé a été bloqué par un administrteur ?</a></h4>
                             </div><br>
-                            <div id="collapseEleven" class="panel-collapse collapse">
+                            <div id="collapseFour" class="panel-collapse collapse">
                                 <div class="panel-body">Si vous ne comprenez pas la raison, veuillez nous contacter pour plus d'informations.</div><br>
                             </div>
                         </div>

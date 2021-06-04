@@ -19,7 +19,7 @@ function getCourseById($id) {
     global $conn;
 
     $query = $conn->prepare(
-    "SELECT title, price, dateUpdated, isActive, idLanguage, idTheme, prerequisite, shortDescription, `description`, idDifficulty, codeBanner
+    "SELECT title, price, promoPrice, dateUpdated, isActive, idLanguage, idTheme, prerequisite, shortDescription, `description`, idDifficulty, codeBanner, codeVideo
     FROM course
     WHERE idCourse = :idCours");
     $query->bindParam(":idCours", $id, PDO::PARAM_INT);
@@ -47,7 +47,7 @@ function getCoursesEnrolledByUserId($idUser) {
     return $result;
 }
 
-function updateCourseById($id, $title, $price, $shortDescription, $description, $dateUpdated, $prerequisite, $codeBanner, $isActive, $idDifficulty, $idTheme, $idLanguage) {
+function updateCourseById($id, $title, $price, $promoPrice, $shortDescription, $description, $dateUpdated, $prerequisite, $codeBanner, $codeVideo, $isActive, $idDifficulty, $idTheme, $idLanguage) {
     global $conn;
     
     $query = $conn->prepare(
@@ -55,11 +55,13 @@ function updateCourseById($id, $title, $price, $shortDescription, $description, 
     SET 
     title = :title,
     price = :price,
+    promoPrice = :promoPrice,
     shortDescription = :shortDescription,
     `description` = :description1,
     dateUpdated = :dateUpdated,
     prerequisite = :prerequisite,
     codeBanner = :codeBanner,
+    codeVideo = :codeVideo,
     isActive = :isActive,
     idDifficulty = :idDifficulty,
     idTheme = :idTheme,
@@ -67,11 +69,13 @@ function updateCourseById($id, $title, $price, $shortDescription, $description, 
     WHERE idCourse = :idCours");
     $query->bindParam(":title", $title, PDO::PARAM_STR);
     $query->bindParam(":price", $price, PDO::PARAM_STR);
+    $query->bindParam(":promoPrice", $promoPrice, PDO::PARAM_STR);
     $query->bindParam(":shortDescription", $shortDescription, PDO::PARAM_STR);
     $query->bindParam(":description1", $description, PDO::PARAM_STR);
     $query->bindParam(":dateUpdated", $dateUpdated, PDO::PARAM_STR);
     $query->bindParam(":prerequisite", $prerequisite, PDO::PARAM_STR);
     $query->bindParam(":codeBanner", $codeBanner, PDO::PARAM_STR);
+    $query->bindParam(":codeVideo", $codeVideo, PDO::PARAM_STR);
     $query->bindParam(":isActive", $isActive, PDO::PARAM_INT);
     $query->bindParam(":idDifficulty", $idDifficulty, PDO::PARAM_INT);
     $query->bindParam(":idTheme", $idTheme, PDO::PARAM_INT);
@@ -83,7 +87,7 @@ function updateCourseById($id, $title, $price, $shortDescription, $description, 
 function getUserCourses($idUser) {
     global $conn;
 
-    $query = $conn->prepare("SELECT course_enroll.idCourse, course.title, course.codeBanner, course.shortDescription, course.price, course.promoPrice 
+    $query = $conn->prepare("SELECT course_enroll.idCourse, course.title, course.codeBanner, course.codeVideo, course.shortDescription, course.price, course.promoPrice 
                             FROM course_enroll 
                             JOIN course 
                             ON course_enroll.idCourse = course.idCourse 
@@ -93,4 +97,15 @@ function getUserCourses($idUser) {
     $query->bindParam(":idUser", $idUser, PDO::PARAM_INT);
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function insertFeedback($email, $title, $description, $stars) {
+    global $conn;
+
+    $query = $conn->prepare("INSERT INTO feedback(mail, title, `description`, nbStar) VALUES (:email, :title, :description, :stars)");
+    $query->bindParam(":email", $email, PDO::PARAM_STR);
+    $query->bindParam(":title", $title, PDO::PARAM_STR);
+    $query->bindParam(":description", $description, PDO::PARAM_INT);
+    $query->bindParam(":stars", $stars, PDO::PARAM_INT);
+    $query->execute();
 }

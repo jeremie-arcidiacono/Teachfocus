@@ -4,7 +4,7 @@ require_once("const.php");
 require_once("func.php");
 require_once("apiStatut.php");
 
-define("DEBUG_MODE", FALSE);
+define("DEBUG_MODE", false);
 
 //////////////////// CHECK IF API IS NOT IN MAINTENANCE ////////////////////
 checkApiIsActive();
@@ -15,6 +15,44 @@ if ($resultCheckRequestMethod != null) {
     returnResponse($resultCheckRequestMethod, 405, 405);
 }
 
+
+
+//////////////////// FUNCTION ////////////////////
+function putFilterInSqlQuer()
+{
+    global $hasFilterLang, $hasFilterPrice, $hasFilterDifficulty;
+    global $filter_price;
+    global $queryString;
+    if (isset($hasFilterLang)) {
+        $queryString .= " AND langName LIKE :filterLang";
+    }
+    if (isset($hasFilterPrice)) {
+        if ($filter_price == "Gratuit") {
+            $queryString .= " AND price IS NULL";
+        }
+        else {
+            $queryString .= " AND (price IS NOT NULL AND (promoPrice IS NULL OR promoPrice >0))";
+        }
+    }
+    if (isset($hasFilterDifficulty)) {
+        $queryString .= " AND diffName LIKE :filterDiff";
+    }
+}
+
+function setParamFilterInSqlQuery()
+{
+    global $sql;
+    global $hasFilterLang, $hasFilterDifficulty;
+    global $filter_lang, $filter_difficulty;
+    if (isset($hasFilterLang)) {
+        $filter_lang .= "%";
+        $sql->bindParam(":filterLang", $filter_lang, PDO::PARAM_STR);
+    }
+    if (isset($hasFilterDifficulty)) {
+        $filter_difficulty .= "%";
+        $sql->bindParam(":filterDiff", $filter_difficulty, PDO::PARAM_STR);
+    }
+}
 
 
 //////////////////// CONNECT DB ////////////////////
@@ -70,32 +108,47 @@ else {
 
 // Filter
 $filter_lang = filter_input(INPUT_GET, "fLang", FILTER_SANITIZE_STRING);
-if (!checkVarExist($filter_lang)) {
-    $filter_lang = "";
+if (checkVarExist($filter_lang)) {
+    $hasFilterLang = true;
+}
+$filter_price = filter_input(INPUT_GET, "fPrice", FILTER_SANITIZE_STRING);
+if (checkVarExist($filter_price)) {
+    $hasFilterPrice = true;
+}
+$filter_difficulty = filter_input(INPUT_GET, "fDifficulty", FILTER_SANITIZE_STRING);
+if (checkVarExist($filter_difficulty)) {
+    $hasFilterDifficulty = true;
 }
 
 try {
-    $sql = $conn->prepare("SELECT 
-        idCourse,
-        title,
-        price,
-        promoPrice,
-        shortDescription,
-        `description`,
-        codeBanner,
-        themeName,
-        langName,
-        diffName 
-    FROM 
-        v_coursesub 
-    WHERE
-        isActive = 1 
-        $searchWord 
-        $orderBy 
-    LIMIT $limit");
-    // && langName LIKE ':filterLang%'
-    $sql->bindParam(":limitEnd", $limit, PDO::PARAM_INT);
-    //$sql->bindParam(":filterLang", $filter_lang, PDO::PARAM_STR);
+    $queryString = "SELECT 
+    idCourse,
+    title,
+    price,
+    promoPrice,
+    shortDescription,
+    `description`,
+    codeBanner,
+    themeName,
+    langName,
+    diffName 
+FROM 
+    v_coursesub 
+WHERE
+    isActive = 1
+    $searchWord";
+
+    /////////////////////////////////////////////////////////////
+    putFilterInSqlQuer();
+
+    $queryString .= " $orderBy LIMIT $limit";
+
+    $sql = $conn->prepare($queryString);
+    //$sql->bindParam(":limitEnd", $limit, PDO::PARAM_INT);
+
+    /////////////////////////////////////////////////////////////
+    setParamFilterInSqlQuery();
+
     $sql->execute();
     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
     if (DEBUG_MODE) {
@@ -103,7 +156,11 @@ try {
         echo $sql->queryString;
     }
 
-    $sql = $conn->prepare("SELECT COUNT(idCourse) AS NBCOUR FROM v_coursesub WHERE isActive = 1 $searchWord");
+
+    $queryString = "SELECT COUNT(idCourse) AS NBCOUR FROM v_coursesub WHERE isActive = 1 $searchWord";
+    putFilterInSqlQuer();
+    $sql = $conn->prepare($queryString);
+    setParamFilterInSqlQuery();
     $sql->execute();
     $resultTemp = $sql->fetch();
     $resultStatistics["NB_ALL_COURSES"] = $resultTemp["NBCOUR"];

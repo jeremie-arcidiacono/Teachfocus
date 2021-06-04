@@ -34,6 +34,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
 if (isset($_GET["disconnect"]) && !empty($_GET["disconnect"])) {
     logOutUser();
+    header('Location: index.php', true, 301); // Cela va enlever les params get qui étaient dans l'url
 }
 
 /*
@@ -58,7 +59,7 @@ $record = $sql->fetchAll(PDO ::FETCH_ASSOC);
     ?>
     <style>
     footer {
-        margin-top: 10%;
+        margin-top: 29%;
     }
 
     header {

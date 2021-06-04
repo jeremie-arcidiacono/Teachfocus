@@ -4,7 +4,7 @@
  * @project : TeachFocus - Edit Course
  * @author : Alexandre PINTRAND
  * @version : 11.0, 14/05/2021, Initial revision
-**/
+ **/
 
 require_once("php/protectedInfo/infoDB.php");
 require_once("php/environement/env_cookies.php");
@@ -46,7 +46,6 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     foreach ($lstDifficulties as $difficultie) {
         $lstIdDifficulties[] = $difficultie["idDifficulty"];
     }
-
 }
 
 if (!isUserLogged()) {
@@ -66,7 +65,7 @@ if ($id) {
         header('Location: index.php', true, 301);
         exit();
     }
-    
+
     $course = getCourseById($id);
 
     $action = filter_input(INPUT_POST, "action", FILTER_SANITIZE_STRING);
@@ -74,6 +73,7 @@ if ($id) {
     if ($action == "edit") {
         $inputCourseName = filter_input(INPUT_POST, "courseName", FILTER_SANITIZE_STRING);
         $inputPrice = filter_input(INPUT_POST, "price", FILTER_VALIDATE_FLOAT);
+        $inputPromoPrice = filter_input(INPUT_POST, "promoPrice", FILTER_VALIDATE_FLOAT);
         $inputIdLangue = filter_input(INPUT_POST, "langue", FILTER_VALIDATE_INT);
         $inputIdTheme = filter_input(INPUT_POST, "theme", FILTER_VALIDATE_INT);
         $inputPrerequis = filter_input(INPUT_POST, "prerequis", FILTER_SANITIZE_STRING);
@@ -83,13 +83,13 @@ if ($id) {
         $currentDate = date('Y-m-d', (time()));
 
         if ($inputPrerequis && $inputShortDescription && $inputCourseName && $inputIdLangue && $inputIdTheme && $inputDescription && $inputIdDifficulties && isset($lstLanguages[$inputIdLangue]) && isset($lstDifficulties[$inputIdDifficulties]) && isset($lstThemes[$inputIdTheme])) {
-            if ($_FILES["img"]["name"] != "") {
+            if ($_FILES["img"]["name"] != "" && $_FILES["video"]["name"] != "") {
                 $uniqId = uniqid('', true);
                 $target_dir = "assets/userMedia/imgCourseBanner/";
                 $uploadValid = 1;
                 $imageFileType = strtolower(pathinfo(basename($_FILES["img"]["name"]), PATHINFO_EXTENSION));
                 $target_file = $target_dir . $uniqId . "." . $imageFileType;
-        
+
                 $check = getimagesize($_FILES["img"]["tmp_name"]);
 
                 if ($check !== false) {
@@ -99,22 +99,22 @@ if ($id) {
                     $errorMsg[] = "Le fichier n'est pas une image.";
                     $uploadValid = 0;
                 }
-        
+
                 if (file_exists($target_file)) {
                     $errorMsg[] = "Désolé, le fichier existe déjà.";
                     $uploadValid = 0;
                 }
-        
+
                 if ($_FILES["img"]["size"] > 2000000) {
                     $errorMsg[] = "Désolé, votre fichier est trop volumineux.";
                     $uploadValid = 0;
                 }
-        
+
                 if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
                     $errorMsg[] = "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
                     $uploadOk = 0;
                 }
-        
+
                 if ($uploadValid == 0) {
                     $errorMsg[] = "Désolé, votre fichier n'a pas été importer.";
                 } else {
@@ -125,11 +125,11 @@ if ($id) {
                         $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
                     }
                 }
-            }
-            else {
+            } else {
                 $imageName = $course["codeBanner"];
+                //$videoName = $course["codeVideo"];
             }
-    
+
             if ($inputPrice === false || $inputPrice == 0.00) {
                 $inputPrice = null;
             }
@@ -139,17 +139,19 @@ if ($id) {
 
                 $course["title"] = $inputCourseName;
                 $course["price"] = $inputPrice;
+                $course["promoPrice"] = $inputPromoPrice;
                 $course["shortDescription"] = $inputShortDescription;
                 $course["description"] = $inputDescription;
                 $course["dateUpdated"] = $currentDate;
                 $course["prequisite"] = $inputPrerequis;
                 $course["codeBanner"] = $imageName;
+                $course["codeVideo"] = "";
                 $course["isActive"] = $isActive;
                 $course["idDifficulty"] = $inputIdDifficulties;
                 $course["idTheme"] = $inputIdTheme;
                 $course["idLanguage"] = $inputIdLangue;
 
-                updateCourseById($id, $course["title"], $course["price"], $course["shortDescription"], $course["description"], $course["dateUpdated"], $course["prequisite"], $course["codeBanner"], $course["isActive"], $course["idDifficulty"], $course["idTheme"], $course["idLanguage"]);
+                updateCourseById($id, $course["title"], $course["price"], $course["promoPrice"], $course["shortDescription"], $course["description"], $course["dateUpdated"], $course["prequisite"], $course["codeBanner"], $course["codeVideo"], $course["isActive"], $course["idDifficulty"], $course["idTheme"], $course["idLanguage"]);
                 unset($isActive);
                 header('Location: espaceEnseignant.php', true, 301); // TEMPORAIRE
             }
@@ -157,8 +159,7 @@ if ($id) {
             $errorMsg[] = "Une erreur est survenue. Veuillez vérifier votre saisie.";
         }
     }
-}
-else {
+} else {
     header('Location: espaceEnseignant.php', true, 301);
     exit();
 }
@@ -198,34 +199,35 @@ else {
                     <input value="<?= $course["price"] ?>" class="form-control" type="text" name="price" id="price" size="3" placeholder="Prix" onkeypress="return onlyAcceptDecimalNumbers(this, event)">
                 </div>
                 <div class="form-group">
+                    <input value="<?= $course["promoPrice"] ?>" class="form-control" type="text" name="promoPrice" id="promoPrice" size="3" placeholder="Prix en promotion" onkeypress="return onlyAcceptDecimalNumbers(this, event)">
+                </div>
+                <div class="form-group">
                     <select class="form-control" name="langue" id="langue">
-                        <?php 
+                        <?php
 
                         foreach ($lstLanguages as $language) {
                             if ($course["idLanguage"] == $language["idLanguage"]) { ?>
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>" selected><?= $language["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $language["idLanguage"] ?>"><?= $language["name"] ?></option>
-                            <?php } 
-                            
-                        } 
-                        
+                        <?php }
+                        }
+
                         ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <select class="form-control" name="theme" id="theme">
-                        <?php 
-                        
+                        <?php
+
                         foreach ($lstThemes as $theme) {
                             if ($course["idTheme"] == $theme["idTheme"]) { ?>
                                 <option style="color: black;" value="<?= $theme["idTheme"] ?>" selected><?= $theme["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $theme["idTheme"] ?>"><?= $theme["name"] ?></option>
-                            <?php } 
-                            
-                        } 
-                        
+                        <?php }
+                        }
+
                         ?>
                     </select>
                 </div>
@@ -241,25 +243,35 @@ else {
 
                 <div class="form-group">
                     <select class="form-control" name="difficulties" id="difficulties">
-                        <?php 
+                        <?php
 
                         foreach ($lstDifficulties as $difficulty) {
                             if ($course["idDifficulty"] == $difficulty["idDifficulty"]) { ?>
-                                <option style="color: black;" value="<?=$difficulty["idDifficulty"] ?>" selected><?= $difficulty["name"] ?></option>
+                                <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>" selected><?= $difficulty["name"] ?></option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>"><?= $difficulty["name"] ?></option>
-                            <?php } 
-                            
-                        } 
-                        
+                        <?php }
+                        }
+
                         ?>
-                        </select>
+                    </select>
                 </div>
 
                 <div class="form-group">
+                <label for="img">Selectionner une image</label>
                     <input class="form-control" type="file" id="img" name="img" accept="image/*" placeholder="Sélectionnez une image">
                 </div>
 
+                <!--<div class="form-group">
+                <label>Selectionner une video</label>
+                    <input class="form-control" type="file" id="video" name="video" accept="video/*" placeholder="Sélectionnez une video">
+                </div>-->
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <div class="g-recaptcha" data-sitekey="<?= getenv('GOOGLE_RECAPTCHA_KEY') ?>"></div>
+                    </div>
+                </div>
                 <div>
                     <button class="btn btn-primary" type="submit" name="action" value="edit">Modifier le cours</button>
                 </div>
@@ -280,6 +292,7 @@ else {
     </div>
     <script src="js/cookiesConsent.js"></script>
     <script src="js/index.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 
 </html>

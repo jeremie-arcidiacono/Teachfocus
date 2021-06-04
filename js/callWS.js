@@ -7,6 +7,48 @@
 let URL = "";
 var coursesInfo;
 
+var filterPrice = null;
+var filterDifficulty = null;
+var filterLang = null;
+
+// Récuperation des filtres de cours
+function priceChanged(){
+    let select = document.getElementById("inputSelectPrice");
+    filterPrice = select.value;
+
+    callWS_courses()
+}
+function langChanged(){
+    let select = document.getElementById("inputSelectLanguages");
+    filterLang = select.value;
+
+    callWS_courses()
+}
+function difficultyChanged(){
+    let select = document.getElementById("inputSelectDifficulty");
+    filterDifficulty = select.value;
+
+    callWS_courses()
+}
+
+function resetFilter(){
+    filterPrice = null;
+    filterDifficulty = null;
+    filterLang = null;
+
+    document.getElementById("inputSelectPrice").selectedIndex=0;
+    document.getElementById("inputSelectLanguages").selectedIndex=0;
+    document.getElementById("inputSelectDifficulty").selectedIndex=0;
+
+    let arrCheckbox = document.querySelectorAll('input[type="checkbox"]')
+    for (let i = 0; i < arrCheckbox.length; i++) {
+        arrCheckbox[i].checked = false;
+    }
+
+    callWS_courses()
+}
+
+
 if (location.hostname == "dev.teachfocus.ch") {
     URL = "http://dev.teachfocus.ch/api";
 }
@@ -37,6 +79,16 @@ function callWS_courses(page, search=undefined) {
         if (!isNullOrEmpty(search)) {
             fullUrl += `&s=${search}`;
         }
+    }
+
+    if (!isNullOrEmpty(filterPrice)) {
+        fullUrl += "&fPrice=" + filterPrice;
+    }
+    if (!isNullOrEmpty(filterLang)) {
+        fullUrl += "&fLang=" + filterLang;
+    }
+    if (!isNullOrEmpty(filterDifficulty)) {
+        fullUrl += "&fDifficulty=" + filterDifficulty;
     }
 
     $.ajax({
@@ -77,7 +129,7 @@ function callWS_courses(page, search=undefined) {
 
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            alert("Error " + textStatus);
+            alert("Erreur général.\r\nReessayer plus tard");
             console.log(jqXHR)
             console.log(errorThrown)
         }
@@ -129,25 +181,28 @@ function displayAllCourses(dataCourses) {
             courses.innerHTML += `<div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=${dataCourse["idCourse"]}"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/${dataCourse["codeBanner"]}"></a>
             <h3 class="name">${dataCourse["title"]}</h3>
             <p class="description">${dataCourse["shortDescription"]}</p>
-            <a href="viewCours.php?id=${dataCourse["idCourse"]}"><p class="price">
+            <p class="price">
             <span class=\"noPromoPrice\">${dataCourse["price"]}</span>
             <span class=\"currentPrice\">${dataCourse["promoPrice"]}</span></p><br>
+            <a href="viewCours.php?id=${dataCourse["idCourse"]}">
             <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div>`;
         }
         else if (dataCourse["price"] !== null) {
             courses.innerHTML += `<div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=${dataCourse["idCourse"]}"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/${dataCourse["codeBanner"]}"></a>
             <h3 class="name">${dataCourse["title"]}</h3>
             <p class="description">${dataCourse["shortDescription"]}</p>
-            <a href="viewCours.php?id=${dataCourse["idCourse"]}"><p class="price">
+            <p class="price">
             <span class=\"currentPrice\">${dataCourse["price"]}</span></p><br>
+            <a href="viewCours.php?id=${dataCourse["idCourse"]}">
             <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div>`;
         }
         else {
             courses.innerHTML += `<div class="col-sm-6 col-md-4 item"><a href="viewCours.php?id=${dataCourse["idCourse"]}"><img class="img-fluid" src="assets/userMedia/imgCourseBanner/${dataCourse["codeBanner"]}"></a>
             <h3 class="name">${dataCourse["title"]}</h3>
             <p class="description">${dataCourse["shortDescription"]}</p>
-            <a href="viewCours.php?id=${dataCourse["idCourse"]}"><p class="price">
+            <p class="price">
             <span class=\"currentPrice\">Gratuit</span></p><br>
+            <a href="viewCours.php?id=${dataCourse["idCourse"]}">
             <button class="btn btn-outline-primary" value="VoirCours">Voir cours</button></a></div>`;
         }
     });

@@ -5,6 +5,43 @@ require_once("php/class/User.php");
 session_start();
 //require_once("php/connection.php");
 require_once("php/security.php");
+require_once("php/globalFunc02.php");
+
+$errorMsg = array(); // A chaque erreur le tableau se rempli, il serra afficher ensuite
+
+if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "dev.teachfocus.ch") {
+    try {
+        $conn = new PDO("mysql:host={$db_host};dbname={$db_name};charset=utf8",$db_user,$db_password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    }
+    catch(PDOEXCEPTION $e) {
+        $e->getMessage();
+    }
+}
+
+$email = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);
+$title = filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING);
+$feedback = filter_input(INPUT_POST, "feedback", FILTER_SANITIZE_STRING);
+$stars = filter_input(INPUT_POST, "stars", FILTER_VALIDATE_INT);
+
+var_dump($email);
+var_dump($title);
+var_dump($feedback);
+var_dump($stars);
+
+$action = filter_input(INPUT_POST, "action", FILTER_SANITIZE_STRING);
+
+if ($action == "submit") {
+    if ($email && $title && $feedback && $stars) {
+        insertFeedback($email, $title, $feedback, $stars);
+        echo "Success";
+    }
+    else {
+        echo "Fail";
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,15 +59,6 @@ require_once("php/security.php");
     <style>
         footer {
             margin-top: 10%;
-        }
-
-        .btn {
-            width: 100px;
-            height: 50px;
-            margin-right: 50px;
-            margin-left: -40px;
-            margin-top: 5%;
-
         }
 
         .btnEffacer {
@@ -56,6 +84,12 @@ require_once("php/security.php");
         .rating a:focus~a {
             color: orange;
             cursor: pointer;
+        }
+        select {
+            display: flex;
+            text-align-last: center;
+            width: 100%;
+            margin-bottom: 1%;
         }
     </style>
 </head>
@@ -85,7 +119,7 @@ require_once("php/security.php");
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><input class="form-control" type="email" style="font-size:15px;font-family:Armata, sans-serif;" name="email"></div>
+                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><input value="<?= $email ?>" class="form-control" type="email" style="font-size:15px;font-family:Armata, sans-serif;" name="email"></div>
                     </div>
                     <div class="form-row">
                         <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2">
@@ -93,7 +127,7 @@ require_once("php/security.php");
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><input class="form-control" type="text" style="font-size:15px;font-family:Armata, sans-serif;" name="titre"></div>
+                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><input value="<?= $title ?>" class="form-control" type="text" style="font-size:15px;font-family:Armata, sans-serif;" name="title"></div>
                     </div>
                     <div class="form-row" style="font-family:Armata, sans-serif;margin-top:10px;">
                         <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2">
@@ -101,7 +135,7 @@ require_once("php/security.php");
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><textarea class="form-control" style="font-family:Armata, sans-serif;font-size:15px;" name="feedback" maxlength="250" rows="7"></textarea></div>
+                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2"><textarea class="form-control" style="font-family:Armata, sans-serif;font-size:15px;" name="feedback" maxlength="250" rows="7"><?= $feedback ?></textarea></div>
                     </div>
                     <div class="form-row">
                         <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2">
@@ -109,16 +143,28 @@ require_once("php/security.php");
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="rating">
-                            <a href="#5" title="Donner 5 étoiles">☆</a>   
-                            <a href="#4" title="Donner 4 étoiles">☆</a>
-                            <a href="#3" title="Donner 3 étoiles">☆</a>
-                            <a href="#2" title="Donner 2 étoiles">☆</a>
-                            <a href="#1" title="Donner 1 étoile">☆</a>
+                        <div class="col-10 col-sm-10 col-md-8 offset-1 offset-sm-1 offset-md-2">
+                            <select name="stars" id="stars">
+                                <option value="" hidden>Nombre d'étoiles</option>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★</option>
+                                <option value="3">★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <div id="" class="g-recaptcha" data-callback="recaptchaCallback" data-sitekey="<?= getenv('GOOGLE_RECAPTCHA_KEY') ?>"></div>
+                            <div id="html-element"></div>
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-9 col-sm-5 col-md-4 offset-1 offset-sm-4 offset-md-5"><button class="btn btn-warning" class="btnEffacer" style="font-family:Armata, sans-serif;font-size:14px;color:rgb(0,0,0);" type="reset">Effacer </button><button class="btn btn-success" class="btn" id="submit-btn" style="font-family:Armata, sans-serif;font-size:14px;color:rgb(0,0,0);" type="submit">Envoyer </button></div>
+                        <div class="col-9 col-sm-5 col-md-4 offset-1 offset-sm-4 offset-md-5">
+                            <button name="action" value="reset" class="btn btn-warning" class="btnEffacer" style="font-family:Armata, sans-serif;font-size:14px;color:rgb(0,0,0);" type="submit">Effacer </button>
+                            <button name="action" value="submit" onclick="checkCaptcha()" class="btn btn-success" class="btn" id="submit-btn" style="font-family:Armata, sans-serif;font-size:14px;color:rgb(0,0,0);" type="submit">Envoyer </button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -134,6 +180,7 @@ require_once("php/security.php");
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/cookiesConsent.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 
 </html>

@@ -122,12 +122,12 @@ $coursUser = $query->fetchAll(PDO::FETCH_ASSOC);
                                 echo "<div class=\"hideCourseMessage\">Cours bloqué par un administrateur de Teachfocus.</div>";
                             }
                             if ($cours["isActive"] == -1) {
-                                echo "<div class=\"hideCourseMessage\">Vous avez décidé de supprimer ce sours. Vous pouvez encore récupérez votre cours dans les 30 jours qui suivent votre action.</div>";
+                                echo "<div class=\"hideCourseMessage\">Vous avez décidé de supprimer ce cours. Vous pouvez encore récupérez votre cours dans les 30 jours qui suivent votre action.</div>";
                             }
                             ?>
-                            </div>
+                </div>   
                     <?php } ?>
-                
+               
             </div>
         </div>
     </section>

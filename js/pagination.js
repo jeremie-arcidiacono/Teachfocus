@@ -7,7 +7,6 @@
 let pagination;
 
 function getElements() {
-    console.log("dans la fonction getElements");
     pagination = document.querySelector('.pagination');
 }
 

@@ -79,18 +79,25 @@ $inputIdDifficulties = filter_input(INPUT_POST, "difficulties", FILTER_VALIDATE_
 $currentDate = date('Y-m-d', (time()));
 
 
-// Upload image part made by Alexandre PINTRAND
+// Upload image made by Alexandre PINTRAND
+
 
 if ($inputSubmit == "Créer un cours") {
-    if ($_FILES["img"]["name"] != "" && $inputShortDescription && $inputCourseName != "" && $inputIdLangue !== null && $inputIdTheme != null && $inputDescription != "" && $inputPrerequis != "" && $inputIdDifficulties != null) {
+    if ($_FILES["img"]["name"] != "" /*&& $_FILES["video"]["name"] != ""*/ && $inputShortDescription && $inputCourseName != "" && $inputIdLangue !== null && $inputIdTheme != null && $inputDescription != "" && $inputPrerequis != "" && $inputIdDifficulties != null) {
 
         $uniqId = uniqid('', true);
         $target_dir = "assets/userMedia/imgCourseBanner/";
         $uploadValid = 1;
         $imageFileType = strtolower(pathinfo(basename($_FILES["img"]["name"]), PATHINFO_EXTENSION));
         $target_file = $target_dir . $uniqId . "." . $imageFileType;
+/*
+        $VideouniqId = uniqid('', true);
+        $videoTarget_dir = "assets/userMedia/vidCourseMain/";
+        $videoFileType = strtolower(pathinfo(basename($_FILES["video"]["name"]), PATHINFO_EXTENSION));
+        $videoTarget_file = $videoTarget_dir . $VideouniqId . "." . $videoFileType;*/
 
         $check = getimagesize($_FILES["img"]["tmp_name"]);
+        //$checkVideo = getimagesize($_FILES["video"]["tmp_name"]);
 
         if (strlen($inputShortDescription) > 120) {
             $errorMsg[] = "Le champs 'Short Description' est trop long (maximum 100 caractères)";
@@ -98,7 +105,7 @@ if ($inputSubmit == "Créer un cours") {
 
         if ($inputPrice === false || $inputPrice == 0.00) {
             $inputPrice = null;
-         }
+        }
 
         if ($check !== false) {
             // "Le fichier est une image - " . $check["mime"] . ".";
@@ -114,14 +121,30 @@ if ($inputSubmit == "Créer un cours") {
         }
 
         if ($_FILES["img"]["size"] > 2000000) {
-            $errorMsg[] = "Désolé, votre fichier est trop volumineux.";
+            $errorMsg[] = "Désolé, votre image est trop volumineuses.";
             $uploadValid = 0;
         }
 
         if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
             $errorMsg[] = "Désolé, seuls les fichiers au format JPG, JPEG, PNG & GIF sont acceptés.";
-            $uploadOk = 0;
+            $uploadValid = 0;
         }
+
+/*
+        if (file_exists($videoTarget_file)) {
+            $errorMsg[] = "Désolé, le fichier existe déjà.";
+            $uploadValid = 0;
+        }
+
+        if ($_FILES["video"]["size"] > 150000000) {
+            $errorMsg[] = "Désolé, votre vidéo est trop volumineux.";
+            $uploadValid = 0;
+        }
+
+        if ($videoFileType != "mp4" && $videoFileType != "webm" && $videoFileType != "jpeg" && $videoFileType != "ogm") {
+            $errorMsg[] = "Désolé, seuls les vidéos au format mp4, webm & ogm sont acceptés.";
+            $uploadValid = 0;
+        }*/
 
         if ($uploadValid == 0) {
             $errorMsg[] = "Désolé, votre fichier n'a pas été importer.";
@@ -130,12 +153,18 @@ if ($inputSubmit == "Créer un cours") {
                 // echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
             } else {
                 $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
-            }
+            }/*
+            if (move_uploaded_file($_FILES["video"]["tmp_name"], $videoTarget_file)) {
+                // echo "Le fichier " . htmlspecialchars(basename($_FILES["img"]["name"])) . " a été importé.";
+            } else {
+                $errorMsg[] = "Désolé, il y avait une erreur durant l'importation de votre fichier.";
+            }*/
         }
 
         if (count($errorMsg) <= 0) {
             $isActive = 1;
             $imageName = $uniqId . "." . $imageFileType;
+            $videoName = "";//$VideouniqId . "." . $videoFileType;
 
             $sql = $conn->prepare("INSERT INTO `course`
             (`title`,
@@ -146,20 +175,20 @@ if ($inputSubmit == "Créer un cours") {
             `dateUpdated`,
             `prerequisite`,
             `codeBanner`,
+            `codeVideo`,
             `isActive`,
             `idUser`,
             `idDifficulty`,
             `idTheme`,
             `idLanguage`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $sql->execute([$inputCourseName, $inputPrice, $inputShortDescription, $inputDescription, $currentDate, $currentDate, $inputPrerequis, $imageName, $isActive, $_SESSION["User"]->idUser, $inputIdDifficulties, $inputIdTheme, $inputIdLangue]);
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $sql->execute([$inputCourseName, $inputPrice, $inputShortDescription, $inputDescription, $currentDate, $currentDate, $inputPrerequis, $imageName, $videoName, $isActive, $_SESSION["User"]->idUser, $inputIdDifficulties, $inputIdTheme, $inputIdLangue]);
             unset($isActive);
             header('Location: espaceEnseignant.php', true, 301); // TEMPORAIRE
         }
     } else {
         $errorMsg[] = "Une erreur est survenue. Veuillez vérifier votre saisie.";
     }
-    
 }
 
 ?>
@@ -194,33 +223,34 @@ if ($inputSubmit == "Créer un cours") {
                 </div>
                 <div class="form-group">
                     <select class="form-control" name="langue" id="langue">
-                        <?php 
+                        <?php
 
                         foreach ($lstLanguages as $language) {
                             if ($inputIdLangue == $language["idLanguage"]) { ?>
-                                <option style="color: black;" value="<?= $language["idLanguage"] ?>" selected><?= $language["name"] ?></option>
+                                <option style="color: black;" value="<?= $language["idLanguage"] ?>" selected>
+                                    <?= $language["name"] ?></option>
                             <?php } else { ?>
-                                <option style="color: black;" value="<?= $language["idLanguage"] ?>"><?= $language["name"] ?></option>
-                            <?php }
-                            
-                        } 
-                        
+                                <option style="color: black;" value="<?= $language["idLanguage"] ?>"><?= $language["name"] ?>
+                                </option>
+                        <?php }
+                        }
+
                         ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <select class="form-control" name="theme" id="theme">
-                        <?php 
-                        
+                        <?php
+
                         foreach ($lstThemes as $theme) {
                             if ($inputIdTheme == $theme["idTheme"]) { ?>
-                                <option style="color: black;" value="<?= $theme["idTheme"] ?>" selected><?= $theme["name"] ?></option>
+                                <option style="color: black;" value="<?= $theme["idTheme"] ?>" selected><?= $theme["name"] ?>
+                                </option>
                             <?php } else { ?>
                                 <option style="color: black;" value="<?= $theme["idTheme"] ?>"><?= $theme["name"] ?></option>
-                            <?php } 
-                            
-                        } 
-                        
+                        <?php }
+                        }
+
                         ?>
                     </select>
                 </div>
@@ -228,33 +258,44 @@ if ($inputSubmit == "Créer un cours") {
                     <input value="<?= $inputPrerequis ?>" class="form-control" type="text" name="prerequis" id="prerequis" size="80" placeholder="Prérequis">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" value="<?= $inputShortDescription ?>" name="shortDescription" placeholder="Short Description" id="shortDescription" maxlength="100">
+                    <input type="text" class="form-control" value="<?= $inputShortDescription ?>" name="shortDescription" placeholder="Description en quelques phrases" id="shortDescription" maxlength="100">
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" name="description" placeholder="Description" id="description" rows="5"><?= $inputDescription ?></textarea>
+                    <textarea class="form-control" name="description" placeholder="Description complete" id="description" rows="5"><?= $inputDescription ?></textarea>
                 </div>
 
                 <div class="form-group">
                     <select class="form-control" name="difficulties" id="difficulties">
-                        <?php 
+                        <?php
 
                         foreach ($lstDifficulties as $difficulty) {
                             if ($inputIdDifficulties == $difficulty["idDifficulty"]) { ?>
-                                <option style="color: black;" value="<?=$difficulty["idDifficulty"] ?>" selected><?= $difficulty["name"] ?></option>
+                                <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>" selected>
+                                    <?= $difficulty["name"] ?></option>
                             <?php } else { ?>
-                                <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>"><?= $difficulty["name"] ?></option>
-                            <?php } 
-                            
-                        } 
-                        
+                                <option style="color: black;" value="<?= $difficulty["idDifficulty"] ?>">
+                                    <?= $difficulty["name"] ?></option>
+                        <?php }
+                        }
+
                         ?>
-                        </select>
+                    </select>
                 </div>
 
                 <div class="form-group">
+                <label>Selectionner une image</label>
                     <input class="form-control" type="file" id="img" name="img" accept="image/*" placeholder="Sélectionnez une image">
                 </div>
 
+                <!--<div class="form-group">
+                <label>Selectionner une video</label>
+                    <input class="form-control" type="file" id="video" name="video" accept="video/*" placeholder="Sélectionnez une video">
+                </div>-->
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <div class="g-recaptcha" data-sitekey="<?= getenv('GOOGLE_RECAPTCHA_KEY') ?>"></div>
+                    </div>
+                </div>
                 <div>
                     <a href="createCourse.php"><input id="CreeCours" type="submit" class="btn btn-outline-primary" value="Créer un cours" name="submit"></a>
                 </div>
@@ -275,6 +316,7 @@ if ($inputSubmit == "Créer un cours") {
     </div>
     <script src="js/cookiesConsent.js"></script>
     <script src="js/index.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 
 </html>

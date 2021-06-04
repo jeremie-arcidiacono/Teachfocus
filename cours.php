@@ -19,13 +19,15 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
 
         $sql = $conn->prepare("SELECT * FROM difficulty");
         $sql->execute();
-        $lstDifficulties = $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $lstDifficulties = $sql->fetchAll();
+        $lstDifficulties = $sql->fetchAll(PDO::FETCH_ASSOC);
 
         $sql = $conn->prepare("SELECT * FROM theme");
         $sql->execute();
-        $lstThemes = $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $lstThemes = $sql->fetchAll();
+        $lstThemes = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = $conn->prepare("SELECT * FROM `language`");
+        $sql->execute();
+        $lstLanguages = $sql->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOEXCEPTION $e) {
         $e->getMessage();
     }
@@ -90,22 +92,33 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
                 </ul>
                 </select>
             </div>
-            <select>
-                <option value="" hidden>Difficultés</option>
+            <select id="inputSelectDifficulty" onchange="difficultyChanged()">
+                <option value="" hidden >Difficultés</option>
                 <?php
                 foreach ($lstDifficulties as $difficultie) {
-                    echo "<option style='font-family:arial;' value=\"\"> $difficultie[name]</option>";
+                    echo "<option style='font-family:arial;' value=\"$difficultie[name]\"> $difficultie[name]</option>";
                 }
                 ?>
 
             </select>
             <br>
-            <select>
-                <option value="" hidden>Prix</option>
-                <option style='font-family:arial;' value="">Gratuit</option>
-                <option style='font-family:arial;' value="">Payant</option>
+            <select id="inputSelectPrice" onchange="priceChanged()">
+                <option value="" hidden >Prix</option>
+                <option style='font-family:arial;' value="Gratuit">Gratuit</option>
+                <option style='font-family:arial;' value="Payant">Payant</option>
             </select>
+            <br>
 
+            <select id="inputSelectLanguages" onchange="langChanged()">
+                <option value="" hidden >Langues</option>
+                <?php
+                foreach ($lstLanguages as $langue) {
+                    echo "<option style='font-family:arial;' value=\"$langue[name]\"> $langue[name]</option>";
+                }
+                ?>
+            </select>
+            <br>
+            <button type="reset" onclick="resetFilter()">Rénitialiser</button>
 
     </div><!-- End: Filter -->
     </aside>
