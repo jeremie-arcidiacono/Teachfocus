@@ -80,18 +80,19 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     <div class="filter">
         <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style="border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
         <aside style="float:left; width: 400px;">
-            <div class="form-group" style="color: rgb(102,102,102);">
+            <!--<div class="form-group" style="color: rgb(102,102,102);">
                 <h3>Thèmes</h3><br>
                 <ul role="listbox" tabindex="0" style="list-style-type: none;width: 400px; height: 500px; overflow-y: scroll;">
                     <?php
-                    foreach ($lstThemes as $theme) {
-                        /* echo "<option value=\"\"> $test[name]</option>";*/
-                        echo "<li tabindex='-1' role='option' aria-checked='false'><input type='checkbox' name=\"filter_$theme[idTheme]\" id=\"filter_$theme[idTheme]\" style='margin-right:5px;'><label for=\"filter_$theme[idTheme]\">$theme[name]</label></li>";
-                    }
+                    //foreach ($lstThemes as $theme) {
+                        // echo "<option value=\"\"> $test[name]</option>";
+                        //echo "<li tabindex='-1' role='option' aria-checked='false'><input type='checkbox' name=\"filter_$theme[idTheme]\" id=\"filter_$theme[idTheme]\" style='margin-right:5px;'><label for=\"filter_$theme[idTheme]\">$theme[name]</label></li>";
+                    //}
                     ?>
                 </ul>
                 </select>
             </div>
+            -->
             <select id="inputSelectDifficulty" onchange="difficultyChanged()">
                 <option value="" hidden >Difficultés</option>
                 <?php
