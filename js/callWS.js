@@ -10,6 +10,7 @@ var coursesInfo;
 var filterPrice = null;
 var filterDifficulty = null;
 var filterLang = null;
+var filterSearch = null
 
 // Récuperation des filtres de cours
 function priceChanged(){
@@ -30,15 +31,23 @@ function difficultyChanged(){
 
     callWS_courses()
 }
+function searchChanged(){
+    let input = document.getElementById("search");
+    filterSearch = input.value;
+
+    callWS_courses()
+}
 
 function resetFilter(){
     filterPrice = null;
     filterDifficulty = null;
     filterLang = null;
+    filterSearch = null;
 
     document.getElementById("inputSelectPrice").selectedIndex=0;
     document.getElementById("inputSelectLanguages").selectedIndex=0;
     document.getElementById("inputSelectDifficulty").selectedIndex=0;
+    document.getElementById("search").value = "";
 
     let arrCheckbox = document.querySelectorAll('input[type="checkbox"]')
     for (let i = 0; i < arrCheckbox.length; i++) {
@@ -58,7 +67,7 @@ else if (location.hostname == "teachfocus.ch") {
 
 var lstPageWithPagination = ["cours.php"]; // array de toutes les page néccéssitant un système de pagination
 
-function callWS_courses(page, search=undefined) {
+function callWS_courses(page) {
     var path = window.location.pathname;
     var pageName = path.split("/").pop();
 
@@ -76,8 +85,8 @@ function callWS_courses(page, search=undefined) {
             fullUrl += `&page=1`;
         }
         
-        if (!isNullOrEmpty(search)) {
-            fullUrl += `&s=${search}`;
+        if (!isNullOrEmpty(filterSearch)) {
+            fullUrl += `&s=${filterSearch}`;
         }
     }
 

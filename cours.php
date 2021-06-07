@@ -78,7 +78,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     </header>
     <!-- Start: Filter -->
     <div class="filter">
-        <input placeholder="Rechercher un cours" id="search" onkeyup="//searchCourse()" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style="border : solid;" onclick="callWS_courses(1, document.getElementById('search').value)">Rechercher</button><br>
+        <input placeholder="Rechercher un cours" id="search" onkeypress="return enterKeyPressed(event)"></input><button class="btn btn-light action-button" name="Rechercher" style="border : solid;" onclick="searchChanged()">Rechercher</button><br>
         <aside style="float:left; width: 400px;">
             <!--<div class="form-group" style="color: rgb(102,102,102);">
                 <h3>Thèmes</h3><br>
@@ -164,7 +164,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
     <script>
         function enterKeyPressed(event) {
             if (event.keyCode == 13) {
-                callWS_courses(1, document.getElementById("search").value);
+                searchChanged();
             }
         }
     </script>
