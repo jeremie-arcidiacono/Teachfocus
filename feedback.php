@@ -16,7 +16,7 @@ if ($_SERVER["SERVER_NAME"] == "teachfocus.ch" || $_SERVER["SERVER_NAME"] == "de
         $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     }
     catch(PDOEXCEPTION $e) {
-        $e->getMessage();
+        //$e->getMessage();
     }
 }
 
@@ -25,20 +25,18 @@ $title = filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING);
 $feedback = filter_input(INPUT_POST, "feedback", FILTER_SANITIZE_STRING);
 $stars = filter_input(INPUT_POST, "stars", FILTER_VALIDATE_INT);
 
-var_dump($email);
-var_dump($title);
-var_dump($feedback);
-var_dump($stars);
 
 $action = filter_input(INPUT_POST, "action", FILTER_SANITIZE_STRING);
 
 if ($action == "submit") {
     if ($email && $title && $feedback && $stars) {
         insertFeedback($email, $title, $feedback, $stars);
-        echo "Success";
+        $msg = "<p>Merci pour votre feedback !</p>";
+        $msg .= "<br>";
+        $msg .= "<a href=\"index.php\">Retour à l'acceuil</a>";
     }
     else {
-        echo "Fail";
+        $msg = "<p>Une erreur est survenu (tous les champs sont obligatoires)<p>";
     }
 }
 
@@ -168,6 +166,9 @@ if ($action == "submit") {
                     </div>
                 </div>
             </form>
+            <?php if (isset($msg)) { 
+                echo $msg;
+            } ?>
         </div>
     </div>
     <?php include 'php/environement/footer.php'; ?>

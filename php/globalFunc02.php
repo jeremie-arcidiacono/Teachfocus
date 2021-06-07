@@ -101,8 +101,15 @@ function getUserCourses($idUser) {
 
 function insertFeedback($email, $title, $description, $stars) {
     global $conn;
+    if (isUserLogged()) {
+        $query = $conn->prepare("INSERT INTO feedback(mail, title, `description`, nbStar, idUser) VALUES (:email, :title, :description, :stars, :idUser)");
+        $query->bindParam(":idUser", $_SESSION["User"]->idUser, PDO::PARAM_INT);
+    }
+    else {
+        $query = $conn->prepare("INSERT INTO feedback(mail, title, `description`, nbStar) VALUES (:email, :title, :description, :stars)");
+    }
 
-    $query = $conn->prepare("INSERT INTO feedback(mail, title, `description`, nbStar) VALUES (:email, :title, :description, :stars)");
+    
     $query->bindParam(":email", $email, PDO::PARAM_STR);
     $query->bindParam(":title", $title, PDO::PARAM_STR);
     $query->bindParam(":description", $description, PDO::PARAM_INT);
