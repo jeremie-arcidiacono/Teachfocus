@@ -1,1 +1,7 @@
+# User media like image/video...
 assets/userMedia
+
+# Sensitive data like "infoDB.php" (Database identification information)
+php/protectedInfo/*
+
+dumpDB
