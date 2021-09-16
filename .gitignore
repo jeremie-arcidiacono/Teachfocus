@@ -1,5 +1,7 @@
 # User media like image/video...
-assets/userMedia
+assets/userMedia/imgCourseBanner/
+assets/userMedia/imgUserProfile/
+assets/userMedia/vidCourseMain/
 
 # Sensitive data like "infoDB.php" (Database identification information)
 php/protectedInfo/infoDB.php
