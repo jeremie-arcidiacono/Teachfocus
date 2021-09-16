@@ -2,6 +2,6 @@
 assets/userMedia
 
 # Sensitive data like "infoDB.php" (Database identification information)
-php/protectedInfo/*
+php/protectedInfo/infoDB.php
 
 dumpDB
